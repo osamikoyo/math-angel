@@ -57,6 +57,8 @@ func (im *Importer) Start(ctx context.Context) {
 			return
 		default:
 			wg.Go(func() {
+				im.logger.Info("scan new line...")
+
 				var task Task
 
 				if err := json.Unmarshal(scanners.Bytes(), &task); err != nil {
