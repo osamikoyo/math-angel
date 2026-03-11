@@ -1,39 +1,50 @@
 package service
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"math/rand"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/osamikoyo/math-angel/internal/model"
 )
 
+var ErrBadUid = errors.New("bad uid")
+
 type Repository interface {
-	CreateTask(task *model.Task) error
-	GetTasksByTypeAndLevel(taskType string, level uint) ([]model.Task, error)
-	GetTask(id uuid.UUID) (*model.Task, error)
-	UpdateTask(id uuid.UUID, update *model.Task) error
+	CreateTask(ctx context.Context, task *model.Task) error
+	GetTasksByTypeAndLevel(ctx context.Context, taskType string, level uint) ([]model.Task, error)
+	GetTask(ctx context.Context, id uuid.UUID) (*model.Task, error)
+	UpdateTask(ctx context.Context, id uuid.UUID, update *model.Task) error
 }
 
 type Cash interface {
-	SetTask(task *model.Task) error
-	SetTasks(key string, tasks []model.Task) error
-	GetTasks(key string) ([]model.Task, error)
-	GetTask(id uuid.UUID) (*model.Task, error)
+	SetTask(ctx context.Context, task *model.Task) error
+	SetTasks(ctx context.Context, key string, tasks []model.Task) error
+	GetTasks(ctx context.Context, key string) ([]model.Task, error)
+	GetTask(ctx context.Context, id uuid.UUID) (*model.Task, error)
 }
 
 type Service struct {
 	repo Repository
 	cash Cash
+
+	timeout time.Duration
 }
 
 func (s *Service) CreateTask(
+	reqCtx context.Context,
 	taskType string,
 	desc string,
 	decision string,
 	rightAnswer string,
 	level string,
 ) error {
+	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
+	defer cancel()
+
 	task := model.NewTask(
 		taskType,
 		desc,
@@ -42,31 +53,132 @@ func (s *Service) CreateTask(
 		level,
 	)
 
-	if err := s.cash.SetTask(task); err != nil {
+	if err := s.cash.SetTask(ctx, task); err != nil {
 		return err
 	}
 
-	if err := s.repo.CreateTask(task); err != nil {
+	if err := s.repo.CreateTask(ctx, task); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (s *Service) GetRandomTask(taskType string, level uint) (*model.Task, error) {
-	cashedTasks, err := s.cash.GetTasks(getKey(taskType, level))
+func (s *Service) IncLike(reqCtx context.Context, id string) error {
+	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
+	defer cancel()
+
+	uid, err := uuid.Parse(id)
+	if err != nil{
+		return ErrBadUid
+	}
+
+	task, err := s.repo.GetTask(ctx, uid)
+	if err != nil{
+		return err
+	}
+
+	task.Likes++
+
+	s.cash.SetTask(ctx, task)
+	if err = s.repo.CreateTask(ctx, task);err != nil{
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) DecLike(reqCtx context.Context, id string) error {
+	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
+	defer cancel()
+
+	uid, err := uuid.Parse(id)
+	if err != nil{
+		return ErrBadUid
+	}
+
+	task, err := s.repo.GetTask(ctx, uid)
+	if err != nil{
+		return err
+	}
+
+	task.Likes--
+
+	s.cash.SetTask(ctx, task)
+	if err = s.repo.CreateTask(ctx, task);err != nil{
+		return err
+	}
+
+	return nil
+}
+
+
+func (s *Service) IncDislike(reqCtx context.Context, id string) error {
+	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
+	defer cancel()
+
+	uid, err := uuid.Parse(id)
+	if err != nil{
+		return ErrBadUid
+	}
+
+	task, err := s.repo.GetTask(ctx, uid)
+	if err != nil{
+		return err
+	}
+
+	task.Dislikes++
+
+	s.cash.SetTask(ctx, task)
+	if err = s.repo.CreateTask(ctx, task);err != nil{
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) DecDislike(reqCtx context.Context, id string) error {
+	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
+	defer cancel()
+
+	uid, err := uuid.Parse(id)
+	if err != nil{
+		return ErrBadUid
+	}
+
+	task, err := s.repo.GetTask(ctx, uid)
+	if err != nil{
+		return err
+	}
+
+	task.Dislikes--
+
+	s.cash.SetTask(ctx, task)
+	if err = s.repo.CreateTask(ctx, task);err != nil{
+		return err
+	}
+
+	return nil
+}
+
+
+func (s *Service) GetRandomTask(reqCtx context.Context, taskType string, level uint) (*model.Task, error) {
+	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
+	defer cancel()
+
+	cashedTasks, err := s.cash.GetTasks(ctx, getKey(taskType, level))
 	if err == nil && cashedTasks != nil && len(cashedTasks) != 0 {
 		task := getRandomFromArr(cashedTasks)
 
 		return &task, nil
 	}
 
-	tasks, err := s.repo.GetTasksByTypeAndLevel(taskType, level)
+	tasks, err := s.repo.GetTasksByTypeAndLevel(ctx, taskType, level)
 	if err != nil {
 		return nil, err
 	}
 
-	s.cash.SetTasks(getKey(taskType, level), tasks)
+	s.cash.SetTasks(ctx, getKey(taskType, level), tasks)
 
 	task := getRandomFromArr(tasks)
 
