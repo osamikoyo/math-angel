@@ -68,7 +68,7 @@ func (im *Importer) Start(ctx context.Context) {
 
 				im.logger.Info("adding parsed task to db...")
 
-				if err := im.service.CreateTask(task.Type, task.Problem, task.Solution, task.Boxed, task.Level); err != nil {
+				if err := im.service.CreateTask(ctx, task.Type, task.Problem, task.Solution, task.Boxed, task.Level); err != nil {
 					im.logger.Error("failed create parsed task",
 						zap.Any("task", task),
 						zap.Error(err))
