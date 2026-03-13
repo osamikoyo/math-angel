@@ -11,13 +11,13 @@ import (
 	"github.com/osamikoyo/math-angel/internal/model"
 )
 
-var ErrBadUid = errors.New("bad uid")
+var ErrBadUID = errors.New("bad uid")
 
 type Repository interface {
 	CreateTask(ctx context.Context, task *model.Task) error
 	GetTasksByTypeAndLevel(ctx context.Context, taskType string, level uint) ([]model.Task, error)
 	GetTask(ctx context.Context, id uuid.UUID) (*model.Task, error)
-	UpdateTask(ctx context.Context, id uuid.UUID, update *model.Task) error
+	UpdateTask(ctx context.Context, id uuid.UUID, column string, value any) error
 }
 
 type Cash interface {
@@ -69,19 +69,19 @@ func (s *Service) IncLike(reqCtx context.Context, id string) error {
 	defer cancel()
 
 	uid, err := uuid.Parse(id)
-	if err != nil{
-		return ErrBadUid
+	if err != nil {
+		return ErrBadUID
 	}
 
 	task, err := s.repo.GetTask(ctx, uid)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	task.Likes++
 
 	s.cash.SetTask(ctx, task)
-	if err = s.repo.CreateTask(ctx, task);err != nil{
+	if err = s.repo.UpdateTask(ctx, uid, "likes", task.Likes); err != nil {
 		return err
 	}
 
@@ -93,44 +93,43 @@ func (s *Service) DecLike(reqCtx context.Context, id string) error {
 	defer cancel()
 
 	uid, err := uuid.Parse(id)
-	if err != nil{
-		return ErrBadUid
+	if err != nil {
+		return ErrBadUID
 	}
 
 	task, err := s.repo.GetTask(ctx, uid)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	task.Likes--
 
 	s.cash.SetTask(ctx, task)
-	if err = s.repo.CreateTask(ctx, task);err != nil{
+	if err = s.repo.UpdateTask(ctx, uid, "likes", task.Likes); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-
 func (s *Service) IncDislike(reqCtx context.Context, id string) error {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
 	defer cancel()
 
 	uid, err := uuid.Parse(id)
-	if err != nil{
-		return ErrBadUid
+	if err != nil {
+		return ErrBadUID
 	}
 
 	task, err := s.repo.GetTask(ctx, uid)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	task.Dislikes++
 
 	s.cash.SetTask(ctx, task)
-	if err = s.repo.CreateTask(ctx, task);err != nil{
+	if err = s.repo.UpdateTask(ctx, uid, "diclikes", task.Dislikes); err != nil {
 		return err
 	}
 
@@ -142,25 +141,24 @@ func (s *Service) DecDislike(reqCtx context.Context, id string) error {
 	defer cancel()
 
 	uid, err := uuid.Parse(id)
-	if err != nil{
-		return ErrBadUid
+	if err != nil {
+		return ErrBadUID
 	}
 
 	task, err := s.repo.GetTask(ctx, uid)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	task.Dislikes--
 
 	s.cash.SetTask(ctx, task)
-	if err = s.repo.CreateTask(ctx, task);err != nil{
+	if err = s.repo.UpdateTask(ctx, uid, "dislikes", task.Dislikes); err != nil {
 		return err
 	}
 
 	return nil
 }
-
 
 func (s *Service) GetRandomTask(reqCtx context.Context, taskType string, level uint) (*model.Task, error) {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
