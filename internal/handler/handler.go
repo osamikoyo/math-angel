@@ -20,5 +20,7 @@ func (h *Handler) RegisterRouters(e *echo.Echo) {
 
 	taskGroup := e.Group("/task")
 
+	e.PUT("/inc/like", h.IncLike)
+
 	taskGroup.GET("/get/random/:type/level/:level", h.GetRandomTask)
 }
