@@ -1,0 +1,48 @@
+package handler
+
+import (
+	"errors"
+	"net/http"
+	"strconv"
+
+	"github.com/labstack/echo/v5"
+	"github.com/osamikoyo/math-angel/internal/repository"
+)
+
+func (h *Handler) GetBests(c *echo.Context) error {
+	taskType := c.Param("type")
+	levelStr := c.Param("level")
+
+	pageIndexStr := c.Param("page_index")
+	pageIndex, err := strconv.Atoi(pageIndexStr)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "page_index must be number")
+	}
+
+	pageSizeStr := c.Param("page_size")
+	pageSize, err := strconv.Atoi(pageSizeStr)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "page_size must be number")
+	}
+
+	level, err := strconv.Atoi(levelStr)
+	if err != nil {
+		return c.String(http.StatusBadRequest, "level must be number")
+	}
+
+	tasks, err := h.service.GetBests(c.Request().Context(),
+		taskType,
+		uint(level),
+		uint(pageSize),
+		uint(pageIndex))
+	if err != nil{
+		if errors.Is(err, repository.ErrNotFound) {
+			return c.String(http.StatusNotFound, "not found tasks")
+		}
+
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+	
+
+	return c.JSON(http.StatusOK, tasks)
+}
