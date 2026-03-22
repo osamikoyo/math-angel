@@ -16,8 +16,7 @@ type Config struct {
 }
 
 type Redis struct {
-	Enabled bool   `mapstructure:"enabled"`
-	Addr    string `mapstructure:"addr"`
+	Addr string `mapstructure:"addr"`
 }
 
 type Importer struct {
@@ -37,8 +36,11 @@ func LoadConfig(path string) (*Config, error) {
 	v.SetDefault("app.addr", "localhost:8080")
 	v.SetDefault("app.do_import", false)
 	v.SetDefault("app.db_path", "storage/database.db")
-	v.SetDefault("app.redis.enabled", false)
+
 	v.SetDefault("app.redis.addr", "localhost:7079")
+
+	v.SetDefault("app.importer.enabled", false)
+	v.SetDefault("app.importer.file", "math-source/main_train.jsonl")
 
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
