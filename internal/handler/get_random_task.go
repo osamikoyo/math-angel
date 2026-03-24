@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v5"
-	"github.com/osamikoyo/math-angel/internal/repository"
+	selferrors "github.com/osamikoyo/math-angel/internal/errors"
 )
 
 func (h *Handler) GetRandomTask(c *echo.Context) error {
@@ -20,7 +20,7 @@ func (h *Handler) GetRandomTask(c *echo.Context) error {
 
 	task, err := h.service.GetRandomTask(c.Request().Context(), taskType, uint(level))
 	if err != nil {
-		if errors.Is(err, repository.ErrNotFound) {
+		if errors.Is(err, selferrors.ErrNotFound ) {
 			return c.String(http.StatusNotFound, err.Error())
 		}
 
