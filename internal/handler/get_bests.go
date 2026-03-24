@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v5"
-	"github.com/osamikoyo/math-angel/internal/repository"
+	selferrors "github.com/osamikoyo/math-angel/internal/errors"
 )
 
 func (h *Handler) GetBests(c *echo.Context) error {
@@ -36,7 +36,7 @@ func (h *Handler) GetBests(c *echo.Context) error {
 		uint(pageSize),
 		uint(pageIndex))
 	if err != nil{
-		if errors.Is(err, repository.ErrNotFound) {
+		if errors.Is(err, selferrors.ErrNotFound) {
 			return c.String(http.StatusNotFound, "not found tasks")
 		}
 
