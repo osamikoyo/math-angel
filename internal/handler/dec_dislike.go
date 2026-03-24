@@ -4,8 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v5"
-	"github.com/osamikoyo/math-angel/internal/repository"
-	"github.com/osamikoyo/math-angel/internal/service"
+	"github.com/osamikoyo/math-angel/internal/errors"
 )
 
 func (h *Handler) DecDislike(c *echo.Context) error {
@@ -13,9 +12,9 @@ func (h *Handler) DecDislike(c *echo.Context) error {
 
 	if err := h.service.DecDislike(c.Request().Context(), id);err != nil{
 		switch err {
-		case service.ErrBadUID:
+		case errors.ErrBadUID:
 			return c.String(http.StatusBadRequest, err.Error())
-		case repository.ErrNotFound:
+		case errors.ErrNotFound:
 			return c.String(http.StatusNotFound, err.Error())
 		default:
 			return c.String(http.StatusInternalServerError, err.Error())
