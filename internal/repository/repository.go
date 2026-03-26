@@ -3,7 +3,9 @@ package repository
 import (
 	"context"
 	"errors"
+
 	selferrors "github.com/osamikoyo/math-angel/internal/errors"
+	"github.com/osamikoyo/math-angel/internal/service"
 
 	"github.com/google/uuid"
 	"github.com/osamikoyo/math-angel/internal/model"
@@ -16,6 +18,8 @@ type Repository struct {
 	logger *logger.Logger
 	db     *gorm.DB
 }
+
+var _ service.Repository = &Repository{}
 
 func NewRepository(db *gorm.DB, logger *logger.Logger) *Repository {
 	return &Repository{
