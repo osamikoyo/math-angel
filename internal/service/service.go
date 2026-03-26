@@ -2,16 +2,14 @@ package service
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"math/rand"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/osamikoyo/math-angel/internal/errors"
 	"github.com/osamikoyo/math-angel/internal/model"
 )
-
-var ErrBadUID = errors.New("bad uid")
 
 type Repository interface {
 	CreateTask(ctx context.Context, task *model.Task) error
@@ -32,6 +30,14 @@ type Service struct {
 	cash Cash
 
 	timeout time.Duration
+}
+
+func NewService(repo Repository, cash Cash, timeout time.Duration) *Service {
+	return &Service{
+		repo: repo,
+		cash: cash,
+		timeout: timeout,
+	}
 }
 
 func (s *Service) CreateTask(
@@ -70,7 +76,7 @@ func (s *Service) IncLike(reqCtx context.Context, id string) error {
 
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		return ErrBadUID
+		return errors.ErrBadUID
 	}
 
 	task, err := s.repo.GetTask(ctx, uid)
@@ -94,7 +100,7 @@ func (s *Service) DecLike(reqCtx context.Context, id string) error {
 
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		return ErrBadUID
+		return errors.ErrBadUID
 	}
 
 	task, err := s.repo.GetTask(ctx, uid)
@@ -118,7 +124,7 @@ func (s *Service) IncDislike(reqCtx context.Context, id string) error {
 
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		return ErrBadUID
+		return errors.ErrBadUID
 	}
 
 	task, err := s.repo.GetTask(ctx, uid)
@@ -129,7 +135,7 @@ func (s *Service) IncDislike(reqCtx context.Context, id string) error {
 	task.Dislikes++
 
 	s.cash.SetTask(ctx, getKeyForOne(task.ID.String()), task)
-	if err = s.repo.UpdateTask(ctx, uid, "diclikes", task.Dislikes); err != nil {
+	if err = s.repo.UpdateTask(ctx, uid, "dislikes", task.Dislikes); err != nil {
 		return err
 	}
 
@@ -142,7 +148,7 @@ func (s *Service) DecDislike(reqCtx context.Context, id string) error {
 
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		return ErrBadUID
+		return errors.ErrBadUID
 	}
 
 	task, err := s.repo.GetTask(ctx, uid)
@@ -166,9 +172,11 @@ func (s *Service) GetRandomTask(reqCtx context.Context, taskType string, level u
 
 	cashedTasks, err := s.cash.GetTasks(ctx, getKeyForMany(taskType, level))
 	if err == nil && cashedTasks != nil && len(cashedTasks) != 0 {
-		task := getRandomFromArr(cashedTasks)
+		if len(cashedTasks) > 1 {
+			task := getRandomFromArr(cashedTasks)
 
-		return &task, nil
+			return &task, nil
+		}
 	}
 
 	tasks, err := s.repo.GetTasksByTypeAndLevel(ctx, taskType, level)
@@ -199,7 +207,7 @@ func (s *Service) GetTask(reqCtx context.Context, id string) (*model.Task, error
 
 	uid, err := uuid.Parse(id)
 	if err != nil {
-		return nil, ErrBadUID
+		return nil, errors.ErrBadUID
 	}
 
 	task, err = s.repo.GetTask(ctx, uid)
@@ -209,7 +217,7 @@ func (s *Service) GetTask(reqCtx context.Context, id string) (*model.Task, error
 
 	s.cash.SetTask(ctx, getKeyForOne(id), task)
 
-	return nil, err
+	return task, nil
 }
 
 func (s *Service) GetBests(reqCtx context.Context, taskType string, level uint, pageSize, pageIndex uint) ([]model.Task, error) {
