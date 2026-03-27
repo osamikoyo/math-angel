@@ -41,11 +41,11 @@ func LoadConfig(path string) (*Config, error) {
 	v.SetDefault("app.db_path", "storage/database.db")
 	v.SetDefault("app.timeout", 30 * time.Second)
 
-	v.SetDefault("app.redis.addr", "localhost:7079")
+	v.SetDefault("app.redis.addr", "localhost:6379")
 	v.SetDefault("app.redis.exp_time", 15 * time.Minute)
 
 	v.SetDefault("app.importer.enabled", false)
-	v.SetDefault("app.importer.file", "math-source/main_train.jsonl")
+	v.SetDefault("app.importer.file", "math-source/test_source.jsonl")
 
 	if err := v.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); !ok {
@@ -60,6 +60,8 @@ func LoadConfig(path string) (*Config, error) {
 	if err := v.Unmarshal(&cfg); err != nil {
 		return nil, fmt.Errorf("failed parse config to struct")
 	}
+
+	cfg.Addr = "localhost:8080"
 
 	return &cfg, nil
 }
