@@ -1,0 +1,19 @@
+version : '3'
+
+tasks:
+  build-go:
+    cmds:
+      - go build -o bin/app cmd/main.go
+  build:
+    cmds:
+      - bun js:build
+      - templ generate internal/ui
+      - bun tailwind:build
+      - task build-go
+  run:
+    cmds:
+      - task build
+      - ./bin/app --config "config.yaml"
+  watch:
+    cmds:
+      - air
