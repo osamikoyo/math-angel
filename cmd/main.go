@@ -16,14 +16,14 @@ func main() {
 	}
 
 	app, err := app.SetupApp(path)
-	if err != nil{
+	if err != nil {
 		log.Println(err)
 
 		return
 	}
 
 	err = app.Run()
-	if err != nil{
+	if err != nil {
 		log.Println(err)
 
 		return
