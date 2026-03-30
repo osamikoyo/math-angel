@@ -19,7 +19,9 @@ func NewHandler(service *service.Service) *Handler {
 
 func (h *Handler) RegisterRouters(e *echo.Echo) {
 	e.GET("/healthcheck", h.HealthCheck)
+	
 	e.GET("/", h.Home)
+	e.GET("/train", h.StartTrain)
 
 	e.Static("/static", "static")
 
