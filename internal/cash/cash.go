@@ -41,6 +41,10 @@ func (c *Cash) SetTask(ctx context.Context, key string, task *model.Task) error 
 		return ErrEmptyTask
 	}
 
+	c.logger.Info("set task",
+		zap.String("key", key),
+		zap.Any("task", task))
+
 	data, err := json.Marshal(task)
 	if err != nil {
 		c.logger.Error("failed marshal task`",
@@ -67,6 +71,9 @@ func (c *Cash) SetTasks(ctx context.Context, key string, tasks []model.Task) err
 		return ErrEmptyTask
 	}
 
+	c.logger.Error("set tasks",
+		zap.String("key", key))
+
 	data, err := json.Marshal(tasks)
 	if err != nil {
 		c.logger.Error("failed marshal tasks",
@@ -89,6 +96,9 @@ func (c *Cash) SetTasks(ctx context.Context, key string, tasks []model.Task) err
 }
 
 func (c *Cash) GetTask(ctx context.Context, key string) (*model.Task, error) {
+	c.logger.Info("fetch task",
+		zap.String("key", key))
+
 	data, err := c.client.Get(ctx, key).Result()
 	if err != nil {
 		c.logger.Error("failed get task from cash",
@@ -112,6 +122,9 @@ func (c *Cash) GetTask(ctx context.Context, key string) (*model.Task, error) {
 }
 
 func (c *Cash) GetTasks(ctx context.Context, key string) ([]model.Task, error) {
+	c.logger.Info("fetch tasks",
+		zap.String("key", key))
+
 	data, err := c.client.Get(ctx, key).Result()
 	if err != nil {
 		c.logger.Error("failed get tasks from cash",
