@@ -1,4 +1,4 @@
-app:
+
   addr: "localhost:8080"
   db_path: "storage/database.db"
   timeout: 30s
@@ -8,5 +8,5 @@ app:
     exp_time: 15m
 
   importer:
-    enabled: true
+    enabled: false
     file: "math-source/test_source.jsonl"
