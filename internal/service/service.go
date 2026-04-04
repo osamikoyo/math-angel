@@ -11,6 +11,7 @@ import (
 	"github.com/osamikoyo/math-angel/internal/model"
 )
 
+// Repository defines the interface for task persistence operations.
 type Repository interface {
 	CreateTask(ctx context.Context, task *model.Task) error
 	GetTasksByTypeAndLevel(ctx context.Context, taskType string, level string) ([]model.Task, error)
@@ -18,6 +19,7 @@ type Repository interface {
 	UpdateTask(ctx context.Context, id uuid.UUID, column string, value any) error
 }
 
+// Cash defines the interface for caching operations.
 type Cash interface {
 	SetTask(ctx context.Context, key string, task *model.Task) error
 	SetTasks(ctx context.Context, key string, tasks []model.Task) error
@@ -25,13 +27,15 @@ type Cash interface {
 	GetTask(ctx context.Context, key string) (*model.Task, error)
 }
 
+// Service provides business logic for task management, including caching and repository interactions.
 type Service struct {
-	repo Repository
-	cash Cash
+	repo Repository // Repository for data persistence
+	cash Cash       // Cache for fast data access
 
-	timeout time.Duration
+	timeout time.Duration // Timeout for operations
 }
 
+// NewService creates a new Service instance with the given repository, cache, and timeout.
 func NewService(repo Repository, cash Cash, timeout time.Duration) *Service {
 	return &Service{
 		repo:    repo,
@@ -40,6 +44,7 @@ func NewService(repo Repository, cash Cash, timeout time.Duration) *Service {
 	}
 }
 
+// CreateTask creates a new task, stores it in cache and repository.
 func (s *Service) CreateTask(
 	reqCtx context.Context,
 	taskType string,
@@ -70,6 +75,7 @@ func (s *Service) CreateTask(
 	return nil
 }
 
+// IncLike increments the like count for a task by ID.
 func (s *Service) IncLike(reqCtx context.Context, id string) error {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
 	defer cancel()
@@ -94,6 +100,7 @@ func (s *Service) IncLike(reqCtx context.Context, id string) error {
 	return nil
 }
 
+// DecLike decrements the like count for a task by ID.
 func (s *Service) DecLike(reqCtx context.Context, id string) error {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
 	defer cancel()
@@ -118,6 +125,7 @@ func (s *Service) DecLike(reqCtx context.Context, id string) error {
 	return nil
 }
 
+// IncDislike increments the dislike count for a task by ID.
 func (s *Service) IncDislike(reqCtx context.Context, id string) error {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
 	defer cancel()
@@ -142,6 +150,7 @@ func (s *Service) IncDislike(reqCtx context.Context, id string) error {
 	return nil
 }
 
+// DecDislike decrements the dislike count for a task by ID.
 func (s *Service) DecDislike(reqCtx context.Context, id string) error {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
 	defer cancel()
@@ -166,6 +175,7 @@ func (s *Service) DecDislike(reqCtx context.Context, id string) error {
 	return nil
 }
 
+// GetRandomTask retrieves a random task of the specified type and level, using cache if available.
 func (s *Service) GetRandomTask(reqCtx context.Context, taskType string, level string) (*model.Task, error) {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
 	defer cancel()
@@ -191,6 +201,7 @@ func (s *Service) GetRandomTask(reqCtx context.Context, taskType string, level s
 	return &task, nil
 }
 
+// GetTask retrieves a task by ID, checking cache first, then repository.
 func (s *Service) GetTask(reqCtx context.Context, id string) (*model.Task, error) {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
 	defer cancel()
@@ -220,6 +231,7 @@ func (s *Service) GetTask(reqCtx context.Context, id string) (*model.Task, error
 	return task, nil
 }
 
+// GetBests retrieves the top tasks by likes for the specified type and level, with pagination.
 func (s *Service) GetBests(reqCtx context.Context, taskType string, level string, pageSize, pageIndex uint) ([]model.Task, error) {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
 	defer cancel()
@@ -254,14 +266,17 @@ func (s *Service) GetBests(reqCtx context.Context, taskType string, level string
 	return tasks[start:min(start+pageSize, uint(len(tasks)))], nil
 }
 
+// getKeyForMany generates a cache key for multiple tasks by type and level.
 func getKeyForMany(taskType string, level string) string {
 	return fmt.Sprintf("%s:%s", taskType, level)
 }
 
+// getKeyForOne generates a cache key for a single task by ID.
 func getKeyForOne(key string) string {
 	return fmt.Sprintf("one:%s", key)
 }
 
+// getRandomFromArr selects a random element from a slice.
 func getRandomFromArr[T any](arr []T) T {
 	if len(arr) == 0 {
 		panic("getRandomFromArr: empty slice")
@@ -272,10 +287,12 @@ func getRandomFromArr[T any](arr []T) T {
 	return arr[randomIndex]
 }
 
+// getKeyForBests generates a cache key for sorted best tasks by type and level.
 func getKeyForBests(taskType string, level string) string {
 	return fmt.Sprintf("sorted:%s:%s", taskType, level)
 }
 
+// sortTasksByLikes sorts tasks in descending order by likes using quicksort.
 func sortTasksByLikes(tasks []model.Task) []model.Task {
 	if len(tasks) <= 1 {
 		return tasks
