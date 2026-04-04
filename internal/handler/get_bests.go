@@ -11,7 +11,7 @@ import (
 
 func (h *Handler) GetBests(c *echo.Context) error {
 	taskType := c.Param("type")
-	levelStr := c.Param("level")
+	level := c.Param("level")
 
 	pageIndexStr := c.Param("page_index")
 	pageIndex, err := strconv.Atoi(pageIndexStr)
@@ -25,24 +25,18 @@ func (h *Handler) GetBests(c *echo.Context) error {
 		return c.String(http.StatusBadRequest, "page_size must be number")
 	}
 
-	level, err := strconv.Atoi(levelStr)
-	if err != nil {
-		return c.String(http.StatusBadRequest, "level must be number")
-	}
-
 	tasks, err := h.service.GetBests(c.Request().Context(),
 		taskType,
-		uint(level),
+		level,
 		uint(pageSize),
 		uint(pageIndex))
-	if err != nil{
+	if err != nil {
 		if errors.Is(err, selferrors.ErrNotFound) {
 			return c.String(http.StatusNotFound, "not found tasks")
 		}
 
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
-	
 
 	return c.JSON(http.StatusOK, tasks)
 }
