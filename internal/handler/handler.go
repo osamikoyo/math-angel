@@ -33,7 +33,7 @@ func (h *Handler) RegisterRouters(e *echo.Echo) {
 	taskGroup.PUT("/inc/dislike/:id", h.IncDislike)
 	taskGroup.PUT("/dec/dislike/:id", h.DecDislike)
 
-	taskGroup.GET("/get/task/:id", h.GetTask)
+	taskGroup.GET("/get/:id", h.GetTask)
 	taskGroup.GET("/get/random/:type/level/:level", h.GetRandomTask)
 	taskGroup.GET("/get/bests/:type/level/:level/page/:page_index/size/:page_size", h.GetBests)
 }
