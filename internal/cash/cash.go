@@ -101,7 +101,7 @@ func (c *Cash) GetTask(ctx context.Context, key string) (*model.Task, error) {
 
 	data, err := c.client.Get(ctx, key).Result()
 	if err != nil {
-		c.logger.Error("failed get task from cash",
+		c.logger.Warn("failed get task from cash",
 			zap.String("key", key),
 			zap.Error(err))
 
@@ -127,7 +127,7 @@ func (c *Cash) GetTasks(ctx context.Context, key string) ([]model.Task, error) {
 
 	data, err := c.client.Get(ctx, key).Result()
 	if err != nil {
-		c.logger.Error("failed get tasks from cash",
+		c.logger.Warn("failed get tasks from cash",
 			zap.String("key", key),
 			zap.Error(err))
 
