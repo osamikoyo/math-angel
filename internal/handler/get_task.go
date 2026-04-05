@@ -5,13 +5,14 @@ import (
 
 	"github.com/labstack/echo/v5"
 	"github.com/osamikoyo/math-angel/internal/errors"
+	"github.com/osamikoyo/math-angel/internal/ui/pages"
 )
 
 func (h *Handler) GetTask(c *echo.Context) error {
 	id := c.Param("id")
 
 	task, err := h.service.GetTask(c.Request().Context(), id)
-	if err != nil{
+	if err != nil {
 		switch err {
 		case errors.ErrBadUID:
 			return c.String(http.StatusBadRequest, err.Error())
@@ -22,5 +23,14 @@ func (h *Handler) GetTask(c *echo.Context) error {
 		}
 	}
 
-	return c.JSON(http.StatusOK, task)
+	return renderWithStatus(c, http.StatusOK, pages.TaskPage(&pages.Task{
+		Type:     task.Type,
+		ID:       task.ID.String(),
+		Level:    task.Level,
+		Problem:  task.Problem,
+		Solution: task.Solution,
+		Boxed:    task.Boxed,
+		Likes:    int(task.Likes),
+		Dislikes: int(task.Dislikes),
+	}))
 }
