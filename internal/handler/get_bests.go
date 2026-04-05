@@ -7,19 +7,20 @@ import (
 
 	"github.com/labstack/echo/v5"
 	selferrors "github.com/osamikoyo/math-angel/internal/errors"
+	"github.com/osamikoyo/math-angel/internal/ui/pages"
 )
 
 func (h *Handler) GetBests(c *echo.Context) error {
 	taskType := c.Param("type")
 	level := c.Param("level")
 
-	pageIndexStr := c.Param("page_index")
+	pageIndexStr := c.Request().URL.Query().Get("page_index")
 	pageIndex, err := strconv.Atoi(pageIndexStr)
 	if err != nil {
 		return c.String(http.StatusBadRequest, "page_index must be number")
 	}
 
-	pageSizeStr := c.Param("page_size")
+	pageSizeStr := c.Request().URL.Query().Get("page_size")
 	pageSize, err := strconv.Atoi(pageSizeStr)
 	if err != nil {
 		return c.String(http.StatusBadRequest, "page_size must be number")
@@ -38,5 +39,5 @@ func (h *Handler) GetBests(c *echo.Context) error {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	return c.JSON(http.StatusOK, tasks)
+	return renderWithStatus(c, http.StatusOK, pages.TasksPage(tasks, pageSize, pageIndex))
 }
