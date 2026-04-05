@@ -71,9 +71,23 @@ func (im *Importer) Start(ctx context.Context) {
 			im.logger.Info("adding parsed task to db...")
 
 			task.Type = firstToLower(task.Type)
-			
 
-			if err := im.service.CreateTask(context.Background(), task.Type, task.Problem, task.Solution, task.Boxed, task.Level); err != nil {
+			level := ""
+
+			switch task.Level {
+			case "Level 5":
+				level = "hard"
+			case "Level 4", "Level 3":
+				level = "medium"
+			case "Level 2", "Level 1":
+				level = "easy"
+			default:
+				im.logger.Warn("unknown task level",
+					zap.String("level", task.Level))
+				level = "unknown"
+			}
+
+			if err := im.service.CreateTask(context.Background(), task.Type, task.Problem, task.Solution, task.Boxed, level); err != nil {
 				im.logger.Error("failed create parsed task",
 					zap.Any("task", task),
 					zap.Error(err))
