@@ -33,6 +33,9 @@ func (r *Repository) CreateTask(ctx context.Context, task *model.Task) error {
 		return selferrors.ErrEmptyTask
 	}
 
+	r.logger.Info("create task",
+		zap.Any("task", task))
+
 	err := gorm.G[model.Task](r.db).Create(ctx, task)
 	if err != nil {
 		r.logger.Error("failed create task",
@@ -53,6 +56,11 @@ func (r *Repository) CreateTask(ctx context.Context, task *model.Task) error {
 }
 
 func (r *Repository) UpdateTask(ctx context.Context, id uuid.UUID, column string, value any) error {
+	r.logger.Info("updating task",
+		zap.String("id", id.String()),
+		zap.String("column", column),
+		zap.Any("value", value))
+
 	rows, err := gorm.G[model.Task](r.db).Update(ctx, column, value)
 	if rows == 0 {
 		r.logger.Error("not found task",
@@ -78,6 +86,10 @@ func (r *Repository) UpdateTask(ctx context.Context, id uuid.UUID, column string
 }
 
 func (r *Repository) GetTasksByTypeAndLevel(ctx context.Context, taskType string, level string) ([]model.Task, error) {
+	r.logger.Info("fetching tasks",
+		zap.String("type", taskType),
+		zap.String("level", level))
+
 	var (
 		tasks []model.Task
 		err   error
@@ -117,6 +129,9 @@ func (r *Repository) GetTasksByTypeAndLevel(ctx context.Context, taskType string
 }
 
 func (r *Repository) GetTask(ctx context.Context, id uuid.UUID) (*model.Task, error) {
+	r.logger.Info("fetch task",
+		zap.String("id", id.String()))
+
 	task, err := gorm.G[model.Task](r.db).Where("id = ?", id).First(ctx)
 	if err != nil {
 		r.logger.Error("failed get task",
