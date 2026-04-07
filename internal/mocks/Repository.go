@@ -65,7 +65,7 @@ func (_m *Repository) GetTask(ctx context.Context, id uuid.UUID) (*model.Task, e
 }
 
 // GetTasksByTypeAndLevel provides a mock function with given fields: ctx, taskType, level
-func (_m *Repository) GetTasksByTypeAndLevel(ctx context.Context, taskType string, level uint) ([]model.Task, error) {
+func (_m *Repository) GetTasksByTypeAndLevel(ctx context.Context, taskType string, level string) ([]model.Task, error) {
 	ret := _m.Called(ctx, taskType, level)
 
 	if len(ret) == 0 {
@@ -74,10 +74,10 @@ func (_m *Repository) GetTasksByTypeAndLevel(ctx context.Context, taskType strin
 
 	var r0 []model.Task
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, uint) ([]model.Task, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) ([]model.Task, error)); ok {
 		return rf(ctx, taskType, level)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, string, uint) []model.Task); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) []model.Task); ok {
 		r0 = rf(ctx, taskType, level)
 	} else {
 		if ret.Get(0) != nil {
@@ -85,7 +85,7 @@ func (_m *Repository) GetTasksByTypeAndLevel(ctx context.Context, taskType strin
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, string, uint) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, string, string) error); ok {
 		r1 = rf(ctx, taskType, level)
 	} else {
 		r1 = ret.Error(1)
