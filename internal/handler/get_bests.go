@@ -14,13 +14,13 @@ func (h *Handler) GetBests(c *echo.Context) error {
 	taskType := c.Param("type")
 	level := c.Param("level")
 
-	pageIndexStr := c.Request().URL.Query().Get("page_index")
+	pageIndexStr := c.Param("page_index")
 	pageIndex, err := strconv.Atoi(pageIndexStr)
 	if err != nil {
 		return c.String(http.StatusBadRequest, "page_index must be number")
 	}
 
-	pageSizeStr := c.Request().URL.Query().Get("page_size")
+	pageSizeStr := c.Param("page_size")
 	pageSize, err := strconv.Atoi(pageSizeStr)
 	if err != nil {
 		return c.String(http.StatusBadRequest, "page_size must be number")
