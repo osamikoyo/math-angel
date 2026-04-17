@@ -28,10 +28,10 @@ func (h *Handler) RegisterRouters(e *echo.Echo) {
 
 	taskGroup := e.Group("/task")
 
-	taskGroup.PUT("/inc/like/:id", h.IncLike)
-	taskGroup.PUT("/dec/like/:id", h.DecLike)
-	taskGroup.PUT("/inc/dislike/:id", h.IncDislike)
-	taskGroup.PUT("/dec/dislike/:id", h.DecDislike)
+	taskGroup.POST("/inc/like/:id", h.IncLike)
+	taskGroup.POST("/dec/like/:id", h.DecLike)
+	taskGroup.POST("/inc/dislike/:id", h.IncDislike)
+	taskGroup.POST("/dec/dislike/:id", h.DecDislike)
 
 	taskGroup.GET("/get/:id", h.GetTask)
 	taskGroup.GET("/get/random/:type/level/:level", h.GetRandomTask)
