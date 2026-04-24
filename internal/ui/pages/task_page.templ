@@ -1,0 +1,142 @@
+package pages
+
+import (
+    "github.com/osamikoyo/math-angel/internal/ui/layouts"
+)
+
+type Task struct{
+    ID       string
+    Type     string
+    Level    string
+    Problem  string
+    Solution string
+    Boxed    string
+    Likes    int
+    Dislikes int
+}
+
+templ TaskPage(task *Task) {
+    @layouts.Page("Задача • " + task.Type) {
+        <div class="max-w-4xl mx-auto px-4 py-8">
+            
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span class="badge badge-lg badge-primary font-medium">{ task.Type }</span>
+                        <span class="badge badge-lg badge-neutral">Уровень { task.Level }</span>
+                    </div>
+                    <h1 class="text-3xl font-bold mt-2">Задача #{ task.ID }</h1>
+                </div>
+
+                <!-- Рейтинг -->
+                <div class="flex items-center gap-8" id="rating-group">
+                    <!-- Like group -->
+                    <div class="flex items-center gap-1">
+                        <button 
+                            hx-post={ "/task/inc/like/" + task.ID }
+                            class="btn btn-ghost hover:text-success text-2xl transition-all active:scale-110">
+                            ❤️
+                        </button>
+                        <span class="font-semibold text-2xl min-w-[3ch] text-center">{ task.Likes }</span>
+                        
+                        <button 
+                            hx-post={ "/task/dec/like/" + task.ID }
+                            hx-swap="outerHTML"
+                            hx-target="#like-group"
+                            class="btn btn-ghost text-sm opacity-60 hover:opacity-100">
+                            –
+                        </button>
+                    </div>
+
+                    <!-- Dislike group -->
+                    <div class="flex items-center gap-1">
+                        <button 
+                            hx-post={ "/task/inc/dislike/" + task.ID }
+                            class="btn btn-ghost hover:text-error text-2xl transition-all active:scale-110">
+                            💔
+                        </button>
+                        <span class="font-semibold text-2xl min-w-[3ch] text-center">{ task.Dislikes }</span>
+                        
+                        <button 
+                            hx-post={ "/task/dec/dislike/" + task.ID }
+                            hx-swap="outerHTML"
+                            hx-target="#dislike-group"
+                            class="btn btn-ghost text-sm opacity-60 hover:opacity-100">
+                            –
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Основной контент -->
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                
+                <!-- Условие задачи -->
+                <div class="lg:col-span-3">
+                    <div class="card bg-base-100 shadow-xl">
+                        <div class="card-body">
+                            <h2 class="card-title text-2xl mb-6">Условие задачи</h2>
+                            <div class="prose prose-lg max-w-none text-base-content leading-relaxed">
+                                { task.Problem }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Боковая панель -->
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <!-- Решение -->
+                    <div class="collapse collapse-arrow bg-base-100 shadow-xl border border-base-200">
+                        <input type="checkbox" /> 
+                        <div class="collapse-title text-xl font-medium">
+                            Показать решение
+                        </div>
+                        <div class="collapse-content pt-4">
+                            <div class="prose prose-base max-w-none">
+                                { task.Solution }
+                            </div>
+                            
+                            if task.Boxed != "" {
+                                <div class="mt-6 p-5 bg-base-200 rounded-2xl border border-base-300">
+                                    <p class="text-sm uppercase tracking-widest text-base-content/60 mb-1">Ответ</p>
+                                    <div class="font-mono text-3xl font-bold text-primary">
+                                        { task.Boxed }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Информация -->
+                    <div class="card bg-base-100 shadow-xl">
+                        <div class="card-body">
+                            <h3 class="card-title text-lg mb-4">О задаче</h3>
+                            <div class="space-y-3 text-sm">
+                                <div class="flex justify-between py-1">
+                                    <span class="text-base-content/70">Тип</span>
+                                    <span class="font-medium">{ task.Type }</span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span class="text-base-content/70">Уровень</span>
+                                    <span class="badge badge-sm badge-outline">{ task.Level }</span>
+                                </div>
+                                <div class="flex justify-between py-1">
+                                    <span class="text-base-content/70">ID</span>
+                                    <span class="font-mono text-xs text-base-content/60">{ task.ID }</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Нижние кнопки -->
+            <div class="mt-12 flex flex-wrap gap-4 justify-center">
+                <button onclick="history.back()" class="btn btn-outline btn-lg">
+                    ← Назад
+                </button>
+            </div>
+        </div>
+    }
+}
