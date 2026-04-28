@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"math/rand"
+	"slices"
 	"time"
 
 	"github.com/google/uuid"
@@ -259,6 +260,8 @@ func (s *Service) GetBests(reqCtx context.Context, taskType string, level string
 	}
 
 	tasks = sortTasksByLikes(tasks)
+
+	slices.Reverse(tasks)
 
 	s.cash.SetTasks(ctx, getKeyForMany(taskType, level), tasks)
 
