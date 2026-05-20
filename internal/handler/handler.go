@@ -30,6 +30,8 @@ func renderWithStatus(c *echo.Context, status int, component templ.Component) er
 func (h *Handler) RegisterRouters(e *echo.Echo) {
 	e.GET("/healthcheck", h.HealthCheck)
 
+	taskGroup := e.Group("/task", middleware.RequestLogger())
+
 	// page handlers
 
 	e.GET("/", h.pages.Home)
@@ -39,7 +41,13 @@ func (h *Handler) RegisterRouters(e *echo.Echo) {
 
 	e.Static("/static", "static")
 
-	taskGroup := e.Group("/task", middleware.RequestLogger())
+	taskGroup.GET("/search/query/:query/page_index/:page_index/page_size/:page_size", h.pages.Search)
+
+	taskGroup.GET("/get/:id", h.pages.GetTask)
+	taskGroup.GET("/get/random/:type/level/:level", h.pages.GetRandomTask)
+	taskGroup.GET("/get/bests/:type/level/:level/page/:page_index/size/:page_size", h.pages.GetBests)
+
+	// func handlers
 
 	taskGroup.POST("/inc/like/:id", h.IncLike)
 	taskGroup.POST("/dec/like/:id", h.DecLike)
@@ -47,7 +55,4 @@ func (h *Handler) RegisterRouters(e *echo.Echo) {
 	taskGroup.POST("/dec/dislike/:id", h.DecDislike)
 
 	taskGroup.POST("/add", h.AddTask)
-	taskGroup.GET("/get/:id", h.pages.GetTask)
-	taskGroup.GET("/get/random/:type/level/:level", h.pages.GetRandomTask)
-	taskGroup.GET("/get/bests/:type/level/:level/page/:page_index/size/:page_size", h.pages.GetBests)
 }
