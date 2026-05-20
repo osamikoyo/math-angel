@@ -20,7 +20,7 @@ import (
 	"github.com/osamikoyo/math-angel/pkg/logger"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
-	"gorm.io/driver/sqlite"
+	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 
@@ -35,6 +35,7 @@ type App struct {
 
 // SetupApp initializes the application by setting up configuration, logger, repository, cache, and other components.
 func SetupApp(configPath string) (*App, error) {
+
 	cfg, logger, err := setupCfgAndLogger(configPath)
 	if err != nil {
 		return nil, err
