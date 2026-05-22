@@ -6,12 +6,13 @@ import (
 
 	"github.com/labstack/echo/v5"
 	"github.com/osamikoyo/math-angel/internal/errors"
+	"github.com/osamikoyo/math-angel/internal/model"
 	"github.com/osamikoyo/math-angel/internal/ui/pages"
 )
 
 func (h *PageHandler) Search(c *echo.Context) error {
 	query := c.Param("query")
-	
+
 	pageIndexStr := c.Param("page_index")
 	pageIndex, err := strconv.Atoi(pageIndexStr)
 	if err != nil {
@@ -25,8 +26,8 @@ func (h *PageHandler) Search(c *echo.Context) error {
 	}
 
 	tasks, err := h.service.Search(c.Request().Context(), query, pageIndex, pageSize)
-	if err != nil{
-		switch err{
+	if err != nil {
+		switch err {
 		case errors.ErrEmptyQuery:
 			return c.String(http.StatusBadRequest, "empty query")
 		case errors.ErrNotFound:
@@ -36,5 +37,20 @@ func (h *PageHandler) Search(c *echo.Context) error {
 		}
 	}
 
-	return renderWithStatus(c, http.StatusOK, pages.TasksPage(tasks, pageSize, pageIndex))
+	return renderWithStatus(c, http.StatusOK,
+		pages.TasksPage(
+			taskSearchResultToTasks(tasks),
+			pageSize,
+			pageIndex),
+	)
+}
+
+func taskSearchResultToTasks(sr []model.TaskSearchResult) []model.Task {
+	tasks := make([]model.Task, len(sr))
+
+	for i := range sr {
+		tasks[i] = sr[i].Task
+	}
+
+	return tasks
 }
