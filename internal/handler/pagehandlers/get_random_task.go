@@ -16,7 +16,7 @@ func (h *PageHandler) GetRandomTask(c *echo.Context) error {
 	task, err := h.service.GetRandomTask(c.Request().Context(), taskType, level)
 	if err != nil {
 		if errors.Is(err, selferrors.ErrNotFound) {
-			return c.String(http.StatusNotFound, err.Error())
+			return renderWithStatus(c, http.StatusNotFound, pages.NotFound())
 		}
 
 		return c.String(http.StatusInternalServerError, err.Error())
