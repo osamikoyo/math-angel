@@ -33,7 +33,7 @@ func (h *PageHandler) GetBests(c *echo.Context) error {
 		uint(pageIndex))
 	if err != nil {
 		if errors.Is(err, selferrors.ErrNotFound) {
-			return c.String(http.StatusNotFound, "not found tasks")
+			return renderWithStatus(c, http.StatusNotFound, pages.NotFound())
 		}
 
 		return c.String(http.StatusInternalServerError, err.Error())
