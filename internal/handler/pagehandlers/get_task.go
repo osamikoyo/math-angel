@@ -17,7 +17,7 @@ func (h *PageHandler) GetTask(c *echo.Context) error {
 		case errors.ErrBadUID:
 			return c.String(http.StatusBadRequest, err.Error())
 		case errors.ErrNotFound:
-			return c.String(http.StatusNotFound, err.Error())
+			return renderWithStatus(c, http.StatusNotFound, pages.NotFound())
 		default:
 			return c.String(http.StatusInternalServerError, err.Error())
 		}
