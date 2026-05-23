@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/glebarez/sqlite"
 	"github.com/labstack/echo/v5"
 	"github.com/osamikoyo/math-angel/internal/cash"
 	"github.com/osamikoyo/math-angel/internal/config"
@@ -20,7 +21,6 @@ import (
 	"github.com/osamikoyo/math-angel/pkg/logger"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
-	"github.com/glebarez/sqlite"
 	"gorm.io/gorm"
 )
 
