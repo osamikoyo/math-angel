@@ -35,7 +35,6 @@ type App struct {
 
 // SetupApp initializes the application by setting up configuration, logger, repository, cache, and other components.
 func SetupApp(configPath string) (*App, error) {
-
 	cfg, logger, err := setupCfgAndLogger(configPath)
 	if err != nil {
 		return nil, err
