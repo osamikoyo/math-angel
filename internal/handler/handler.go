@@ -42,7 +42,7 @@ func (h *Handler) RegisterRouters(e *echo.Echo) {
 
 	e.Static("/static", "static")
 
-	taskGroup.GET("/search/query/:query/page_index/:page_index/page_size/:page_size", h.pages.Search)
+	taskGroup.GET("/search/page_index/:page_index/page_size/:page_size", h.pages.Search)
 
 	taskGroup.GET("/get/:id", h.pages.GetTask)
 	taskGroup.GET("/get/random/:type/level/:level", h.pages.GetRandomTask)
