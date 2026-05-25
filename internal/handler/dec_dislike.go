@@ -28,7 +28,7 @@ func (h *Handler) DecDislike(c *echo.Context) error {
 	}
 
 	return renderWithStatus(c, http.StatusOK, pages.DislikeGroup(&pages.Task{
-		ID:    task.ID,
+		ID:    task.UID,
 		Likes: int(task.Likes),
 	}))
 }
