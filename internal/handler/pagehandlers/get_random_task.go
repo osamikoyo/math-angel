@@ -23,7 +23,7 @@ func (h *PageHandler) GetRandomTask(c *echo.Context) error {
 	}
 
 	return renderWithStatus(c, http.StatusOK, pages.TaskPage(&pages.Task{
-		ID:       task.ID.String(),
+		ID:       task.UID,
 		Type:     task.Type,
 		Boxed:    task.Boxed,
 		Level:    task.Level,
