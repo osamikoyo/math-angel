@@ -28,7 +28,7 @@ func (h *Handler) IncLike(c *echo.Context) error {
 	}
 
 	return renderWithStatus(c, http.StatusOK, pages.LikeGroup(&pages.Task{
-		ID:    task.ID.String(),
+		ID:    task.UID,
 		Likes: int(task.Likes),
 	}))
 }
