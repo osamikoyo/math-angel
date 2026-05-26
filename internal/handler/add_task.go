@@ -33,6 +33,8 @@ func (h *Handler) AddTask(c *echo.Context) error {
 			pages.ResultMessage("Internal server error", true))
 	}
 
+	c.Request().Header.Set("HX-Redirect", "/")
+
 	return renderWithStatus(c, http.StatusOK,
 		pages.ResultMessage("Task was successfully added", false))
 }
