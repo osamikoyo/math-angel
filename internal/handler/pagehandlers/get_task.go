@@ -25,7 +25,7 @@ func (h *PageHandler) GetTask(c *echo.Context) error {
 
 	return renderWithStatus(c, http.StatusOK, pages.TaskPage(&pages.Task{
 		Type:     task.Type,
-		ID:       task.ID.String(),
+		ID:       task.UID,
 		Level:    task.Level,
 		Problem:  task.Problem,
 		Solution: task.Solution,
