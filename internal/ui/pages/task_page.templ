@@ -4,7 +4,7 @@ import (
     "github.com/osamikoyo/math-angel/internal/ui/layouts"
 )
 
-type Task struct{
+type Task struct {
     ID       string
     Type     string
     Level    string
@@ -15,10 +15,53 @@ type Task struct{
     Dislikes int
 }
 
+templ LikeGroup(task *Task) {
+    <div class="flex items-center gap-1" id="like-group">
+        <button 
+            hx-post={ "/task/inc/like/" + task.ID }
+            hx-swap="outerHTML"
+            hx-target="#like-group"
+            class="btn btn-ghost hover:text-success text-2xl transition-all active:scale-110">
+            ❤️
+        </button>
+        <span class="font-semibold text-2xl min-w-[3ch] text-center">{ task.Likes }</span>
+        
+        <button 
+            hx-post={ "/task/dec/like/" + task.ID }
+            hx-swap="outerHTML"
+            hx-target="#like-group"
+            class="btn btn-ghost text-sm opacity-60 hover:opacity-100">
+            –
+        </button>
+    </div>
+}
+
+templ DislikeGroup(task *Task) {
+    <div class="flex items-center gap-1" id="dislike-group">
+        <button 
+            hx-post={ "/task/inc/dislike/" + task.ID }
+            hx-swap="outerHTML"
+            hx-target="#dislike-group"
+            class="btn btn-ghost hover:text-error text-2xl transition-all active:scale-110">
+            💔
+        </button>
+        <span class="font-semibold text-2xl min-w-[3ch] text-center">{ task.Dislikes }</span>
+        
+        <button 
+            hx-post={ "/task/dec/dislike/" + task.ID }
+            hx-swap="outerHTML"
+            hx-target="#dislike-group"
+            class="btn btn-ghost text-sm opacity-60 hover:opacity-100">
+            –
+        </button>
+    </div>
+}
+
 templ TaskPage(task *Task) {
     @layouts.Page("Задача • " + task.Type) {
         <div class="max-w-4xl mx-auto px-4 py-8">
             
+            <!-- Header -->
             <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
                 <div>
                     <div class="flex items-center gap-3">
@@ -28,43 +71,9 @@ templ TaskPage(task *Task) {
                     <h1 class="text-3xl font-bold mt-2">Задача #{ task.ID }</h1>
                 </div>
 
-                <!-- Рейтинг -->
                 <div class="flex items-center gap-8" id="rating-group">
-                    <!-- Like group -->
-                    <div class="flex items-center gap-1">
-                        <button 
-                            hx-post={ "/task/inc/like/" + task.ID }
-                            class="btn btn-ghost hover:text-success text-2xl transition-all active:scale-110">
-                            ❤️
-                        </button>
-                        <span class="font-semibold text-2xl min-w-[3ch] text-center">{ task.Likes }</span>
-                        
-                        <button 
-                            hx-post={ "/task/dec/like/" + task.ID }
-                            hx-swap="outerHTML"
-                            hx-target="#like-group"
-                            class="btn btn-ghost text-sm opacity-60 hover:opacity-100">
-                            –
-                        </button>
-                    </div>
-
-                    <!-- Dislike group -->
-                    <div class="flex items-center gap-1">
-                        <button 
-                            hx-post={ "/task/inc/dislike/" + task.ID }
-                            class="btn btn-ghost hover:text-error text-2xl transition-all active:scale-110">
-                            💔
-                        </button>
-                        <span class="font-semibold text-2xl min-w-[3ch] text-center">{ task.Dislikes }</span>
-                        
-                        <button 
-                            hx-post={ "/task/dec/dislike/" + task.ID }
-                            hx-swap="outerHTML"
-                            hx-target="#dislike-group"
-                            class="btn btn-ghost text-sm opacity-60 hover:opacity-100">
-                            –
-                        </button>
-                    </div>
+                    @LikeGroup(task)
+                    @DislikeGroup(task)
                 </div>
             </div>
 
@@ -76,7 +85,7 @@ templ TaskPage(task *Task) {
                     <div class="card bg-base-100 shadow-xl">
                         <div class="card-body">
                             <h2 class="card-title text-2xl mb-6">Условие задачи</h2>
-                            <div class="prose prose-lg max-w-none text-base-content leading-relaxed">
+                            <div class="prose prose-lg max-w-none text-base-content leading-relaxed katex-content">
                                 { task.Problem }
                             </div>
                         </div>
@@ -93,14 +102,14 @@ templ TaskPage(task *Task) {
                             Показать решение
                         </div>
                         <div class="collapse-content pt-4">
-                            <div class="prose prose-base max-w-none">
+                            <div class="prose prose-base max-w-none katex-content">
                                 { task.Solution }
                             </div>
                             
                             if task.Boxed != "" {
                                 <div class="mt-6 p-5 bg-base-200 rounded-2xl border border-base-300">
                                     <p class="text-sm uppercase tracking-widest text-base-content/60 mb-1">Ответ</p>
-                                    <div class="font-mono text-3xl font-bold text-primary">
+                                    <div class="font-mono text-3xl font-bold text-primary katex-content">
                                         { task.Boxed }
                                     </div>
                                 </div>
@@ -138,5 +147,24 @@ templ TaskPage(task *Task) {
                 </button>
             </div>
         </div>
+
+        <!-- Инициализация KaTeX -->
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                        { left: "\\(", right: "\\)", display: false },
+                        { left: "\\[", right: "\\]", display: true }
+                    ],
+                    throwOnError: false
+                });
+            });
+        </script>
     }
 }
