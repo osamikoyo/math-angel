@@ -1,6 +1,7 @@
 package pagehandlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -11,7 +12,9 @@ import (
 )
 
 func (h *PageHandler) Search(c *echo.Context) error {
-	query := c.Param("query")
+	query := c.QueryParam("query")
+
+	log.Printf("query is :%s", query)
 
 	pageIndexStr := c.Param("page_index")
 	pageIndex, err := strconv.Atoi(pageIndexStr)
@@ -31,7 +34,7 @@ func (h *PageHandler) Search(c *echo.Context) error {
 		case errors.ErrEmptyQuery:
 			return c.String(http.StatusBadRequest, "empty query")
 		case errors.ErrNotFound:
-			return c.String(http.StatusNotFound, "not found tasks")
+			return renderWithStatus(c, http.StatusNotFound, pages.NotFound())
 		default:
 			return c.String(http.StatusInternalServerError, "internal server error")
 		}
