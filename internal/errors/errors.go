@@ -11,3 +11,9 @@ var (
 
 	ErrEmptyQuery = errors.New("empty query")
 )
+
+// Validation errors
+var (
+	ErrEmptyUID   = errors.New("empty uid")
+	ErrInvalidUID = errors.New("unvalid uid")
+)
