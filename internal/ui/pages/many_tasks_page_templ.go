@@ -47,7 +47,7 @@ func TasksPage(tasks []model.Task, pageSize, pageIndex int) templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"max-w-6xl mx-auto px-4 py-8\"><div class=\"flex items-center justify-between mb-8\"><div><h1 class=\"text-4xl font-bold text-base-content\">Все задачи</h1><p class=\"text-base-content/70 mt-1\">Выберите задачу и начните тренироваться</p></div><div class=\"flex gap-3\"><a href=\"/train\" class=\"btn btn-primary\">Начать тренировку</a> <a href=\"/bests\" class=\"btn btn-outline\">Лучшие задачи</a></div></div><!-- Сетка задач --><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\" id=\"tasks-list\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"max-w-6xl mx-auto px-4 py-8\"><div class=\"flex items-center justify-between mb-8\"><div><h1 class=\"text-4xl font-bold text-base-content\">Все задачи</h1><p class=\"text-base-content/70 mt-1\">Выберите задачу и начните тренироваться</p></div><div class=\"flex gap-3\"><a href=\"/train\" class=\"btn btn-primary\">Начать тренировку</a> <a href=\"/bests\" class=\"btn btn-outline\">Лучшие задачи по типу</a></div></div><!-- Сетка задач --><div class=\"grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6\" id=\"tasks-list\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -78,7 +78,7 @@ func TasksPage(tasks []model.Task, pageSize, pageIndex int) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span></div><!-- Условие (обрезаем длинный текст) --><h2 class=\"line-clamp-3 text-lg font-semibold leading-tight mb-4 min-h-[3.5em]\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span></div><!-- Условие с поддержкой LaTeX --><h2 class=\"line-clamp-3 text-lg font-semibold leading-tight mb-4 min-h-[3.5em] katex-content\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -91,12 +91,12 @@ func TasksPage(tasks []model.Task, pageSize, pageIndex int) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</h2><!-- Ответ (если есть) -->")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</h2><!-- Ответ (если есть) с LaTeX -->")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				if task.Boxed != "" {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"mb-5\"><p class=\"text-xs uppercase tracking-widest text-base-content/60 mb-1\">Ответ</p><div class=\"font-mono text-xl font-bold text-primary\">")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"mb-5\"><p class=\"text-xs uppercase tracking-widest text-base-content/60 mb-1\">Ответ</p><div class=\"font-mono text-xl font-bold text-primary katex-content\">")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
@@ -223,7 +223,7 @@ func TasksPage(tasks []model.Task, pageSize, pageIndex int) templ.Component {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "</div><!-- KaTeX для списка задач --> <script src=\"https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js\"></script> <link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css\"><script src=\"https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js\"></script> <script>\n            document.addEventListener(\"DOMContentLoaded\", function() {\n                renderMathInElement(document.body, {\n                    delimiters: [\n                        { left: \"$$\", right: \"$$\", display: true },\n                        { left: \"$\", right: \"$\", display: false },\n                        { left: \"\\\\(\", right: \"\\\\)\", display: false },\n                        { left: \"\\\\[\", right: \"\\\\]\", display: true }\n                    ],\n                    throwOnError: false,\n                    ignoredTags: [\"script\", \"style\", \"textarea\", \"pre\", \"code\"]\n                });\n            });\n        </script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
