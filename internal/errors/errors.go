@@ -14,6 +14,8 @@ var (
 
 // Validation errors
 var (
-	ErrEmptyUID   = errors.New("empty uid")
-	ErrInvalidUID = errors.New("unvalid uid")
+	ErrEmptyUID     = errors.New("empty uid")
+	ErrInvalidUID   = errors.New("unvalid uid")
+	ErrEmptyProblem = errors.New("empty problem")
+	ErrInvalidLevel = errors.New("invalid level")
 )
