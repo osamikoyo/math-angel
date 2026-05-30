@@ -20,12 +20,11 @@ templ TasksPage(tasks []model.Task, pageSize, pageIndex int) {
                         Начать тренировку
                     </a>
                     <a href="/bests" class="btn btn-outline">
-                        Лучшие задачи
+                        Лучшие задачи по типу
                     </a>
                 </div>
             </div>
 
-            <!-- Сетка задач -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tasks-list">
                 for _, task := range tasks {
                     <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 border border-base-200 overflow-hidden">
@@ -40,16 +39,14 @@ templ TasksPage(tasks []model.Task, pageSize, pageIndex int) {
                                 </span>
                             </div>
 
-                            <!-- Условие (обрезаем длинный текст) -->
-                            <h2 class="line-clamp-3 text-lg font-semibold leading-tight mb-4 min-h-[3.5em]">
+                            <h2 class="line-clamp-3 text-lg font-semibold leading-tight mb-4 min-h-[3.5em] katex-content">
                                 { task.Problem }
                             </h2>
 
-                            <!-- Ответ (если есть) -->
                             if task.Boxed != "" {
                                 <div class="mb-5">
                                     <p class="text-xs uppercase tracking-widest text-base-content/60 mb-1">Ответ</p>
-                                    <div class="font-mono text-xl font-bold text-primary">
+                                    <div class="font-mono text-xl font-bold text-primary katex-content">
                                         { task.Boxed }
                                     </div>
                                 </div>
@@ -67,7 +64,7 @@ templ TasksPage(tasks []model.Task, pageSize, pageIndex int) {
                                 </div>
 
                                 <!-- Кнопка "Решить" -->
-                                <a href={ fmt.Sprintf("/task/get/%s", task.ID) }
+                                <a href={ fmt.Sprintf("/task/get/%s", task.UID) }
                                    class="btn btn-sm btn-primary btn-outline">
                                     Решить
                                 </a>
@@ -108,5 +105,25 @@ templ TasksPage(tasks []model.Task, pageSize, pageIndex int) {
                 </div>
             }
         </div>
+
+        <!-- KaTeX для списка задач -->
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+        
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        { left: "$$", right: "$$", display: true },
+                        { left: "$", right: "$", display: false },
+                        { left: "\\(", right: "\\)", display: false },
+                        { left: "\\[", right: "\\]", display: true }
+                    ],
+                    throwOnError: false,
+                    ignoredTags: ["script", "style", "textarea", "pre", "code"]
+                });
+            });
+        </script>
     }
 }
