@@ -42,7 +42,9 @@ func (t *Task) Validate() error {
 		return errors.ErrEmptyProblem
 	}
 
-	if t.Level != "easy" || t.Level != "medium" || t.Level != "hard" {
+	if t.Level != "easy" && t.Level != "medium" && t.Level != "hard" {
 		return errors.ErrInvalidLevel
 	}
+
+	return nil
 }
