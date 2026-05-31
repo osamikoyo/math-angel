@@ -20,21 +20,19 @@ func (h *Handler) AddTask(c *echo.Context) error {
 
 	if err := c.Bind(&req); err != nil {
 		return renderWithStatus(c, http.StatusBadRequest,
-			pages.ResultMessage("Error in form data", true))
+			pages.ResultMessage("Ошибка в данных формы", true))
 	}
 
 	err := h.service.CreateTask(c.Request().Context(), req.Type, req.Problem, req.Solution, req.Boxed, req.Level)
 	if err != nil {
 		if errors.Is(err, selferrors.ErrAlreadyExist) {
 			return renderWithStatus(c, http.StatusBadRequest,
-				pages.ResultMessage("Already exist", true))
+				pages.ResultMessage("Такая задача уже существует", true))
 		}
 		return renderWithStatus(c, http.StatusInternalServerError,
-			pages.ResultMessage("Internal server error", true))
+			pages.ResultMessage("Внутренняя ошибка сервера", true))
 	}
 
-	c.Request().Header.Set("HX-Redirect", "/")
-
-	return renderWithStatus(c, http.StatusOK,
-		pages.ResultMessage("Task was successfully added", false))
+	c.Response().Header().Set("HX-Redirect", "/")
+	return c.NoContent(http.StatusOK)
 }
