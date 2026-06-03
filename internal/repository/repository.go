@@ -61,10 +61,10 @@ func (r *Repository) UpdateTask(ctx context.Context, id uuid.UUID, column string
 		zap.String("column", column),
 		zap.Any("value", value))
 
-	rows, err := gorm.G[model.Task](r.db).Where("id = ?", id).Update(ctx, column, value)
+	rows, err := gorm.G[model.Task](r.db).Where("uid = ?", id).Update(ctx, column, value)
 	if rows == 0 {
 		r.logger.Error("not found task",
-			zap.String("id", id.String()))
+			zap.String("uid", id.String()))
 
 		return selferrors.ErrNotFound
 	}
@@ -130,9 +130,9 @@ func (r *Repository) GetTasksByTypeAndLevel(ctx context.Context, taskType string
 
 func (r *Repository) GetTask(ctx context.Context, id uuid.UUID) (*model.Task, error) {
 	r.logger.Info("fetch task",
-		zap.String("id", id.String()))
+		zap.String("uid", id.String()))
 
-	task, err := gorm.G[model.Task](r.db).Where("id = ?", id).First(ctx)
+	task, err := gorm.G[model.Task](r.db).Where("uid = ?", id).First(ctx)
 	if err != nil {
 		r.logger.Error("failed get task",
 			zap.String("id", id.String()),
@@ -164,17 +164,16 @@ func (r *Repository) SearchTasks(ctx context.Context, query string, limit, offse
 	var results []model.TaskSearchResult
 
 	err := r.db.Raw(`
-		SELECT 
-			t.*,
-			snippet(tasks_fts, -1, '<b>', '</b>', '...', 64) as snippet,
-			bm25(tasks_fts) as rank
-		FROM tasks t
-		JOIN tasks_fts f ON t.id = f.rowid
-		WHERE tasks_fts MATCH ?
-		ORDER BY rank DESC
-		LIMIT ? OFFSET ?
-	`, query, limit, offset).Scan(&results).Error
-
+        SELECT 
+            t.*,
+            snippet(tasks_fts, -1, '<b>', '</b>', '...', 64) as snippet,
+            bm25(tasks_fts) as rank
+        FROM tasks t
+        JOIN tasks_fts f ON t.id = f.rowid
+        WHERE tasks_fts MATCH ?
+        ORDER BY rank DESC
+        LIMIT ? OFFSET ?
+    `, query, limit, offset).Scan(&results).Error
 	if err != nil {
 		r.logger.Error("search failed",
 			zap.String("query", query),
@@ -182,8 +181,8 @@ func (r *Repository) SearchTasks(ctx context.Context, query string, limit, offse
 		return nil, selferrors.ErrUnknown
 	}
 
-	r.logger.Info("search completed",
-		zap.Int("found", len(results)))
+	r.logger.Info("searched tasks",
+		zap.Any("tasks", results))
 
 	return results, nil
 }
