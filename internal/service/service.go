@@ -18,6 +18,7 @@ type Repository interface {
 	GetTasksByTypeAndLevel(ctx context.Context, taskType string, level string) ([]model.Task, error)
 	GetTask(ctx context.Context, id uuid.UUID) (*model.Task, error)
 	UpdateTask(ctx context.Context, id uuid.UUID, column string, value any) error
+	SearchTasks(ctx context.Context, query string, limit, offset int) ([]model.TaskSearchResult, error)
 }
 
 // Cash defines the interface for caching operations.
@@ -65,7 +66,11 @@ func (s *Service) CreateTask(
 		level,
 	)
 
-	if err := s.cash.SetTask(ctx, getKeyForOne(task.ID.String()), task); err != nil {
+	if err := task.Validate(); err != nil {
+		return err
+	}
+
+	if err := s.cash.SetTask(ctx, getKeyForOne(task.UID), task); err != nil {
 		return err
 	}
 
@@ -74,6 +79,35 @@ func (s *Service) CreateTask(
 	}
 
 	return nil
+}
+
+// Search finds tasks in db by query
+func (s *Service) Search(reqCtx context.Context, query string, pageIndex int, pageSize int) ([]model.TaskSearchResult, error) {
+	if query == "" {
+		return nil, errors.ErrEmptyQuery
+	}
+
+	if pageIndex < 1 {
+		pageIndex = 1
+	}
+	if pageSize < 1 {
+		pageSize = 20
+	}
+	if pageSize > 100 {
+		pageSize = 100
+	}
+
+	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
+	defer cancel()
+
+	offset := (pageIndex - 1) * pageSize
+
+	tasks, err := s.repo.SearchTasks(ctx, query, pageSize, offset)
+	if err != nil {
+		return nil, err
+	}
+
+	return tasks, nil
 }
 
 // IncLike increments the like count for a task by ID.
@@ -93,7 +127,7 @@ func (s *Service) IncLike(reqCtx context.Context, id string) error {
 
 	task.Likes++
 
-	s.cash.SetTask(ctx, getKeyForOne(task.ID.String()), task)
+	s.cash.SetTask(ctx, getKeyForOne(task.UID), task)
 	if err = s.repo.UpdateTask(ctx, uid, "likes", task.Likes); err != nil {
 		return err
 	}
@@ -116,9 +150,13 @@ func (s *Service) DecLike(reqCtx context.Context, id string) error {
 		return err
 	}
 
+	if task.Likes == 0 {
+		return nil
+	}
+
 	task.Likes--
 
-	s.cash.SetTask(ctx, getKeyForOne(task.ID.String()), task)
+	s.cash.SetTask(ctx, getKeyForOne(task.UID), task)
 	if err = s.repo.UpdateTask(ctx, uid, "likes", task.Likes); err != nil {
 		return err
 	}
@@ -143,7 +181,7 @@ func (s *Service) IncDislike(reqCtx context.Context, id string) error {
 
 	task.Dislikes++
 
-	s.cash.SetTask(ctx, getKeyForOne(task.ID.String()), task)
+	s.cash.SetTask(ctx, getKeyForOne(task.UID), task)
 	if err = s.repo.UpdateTask(ctx, uid, "dislikes", task.Dislikes); err != nil {
 		return err
 	}
@@ -166,9 +204,13 @@ func (s *Service) DecDislike(reqCtx context.Context, id string) error {
 		return err
 	}
 
+	if task.Dislikes == 0 {
+		return nil
+	}
+
 	task.Dislikes--
 
-	s.cash.SetTask(ctx, getKeyForOne(task.ID.String()), task)
+	s.cash.SetTask(ctx, getKeyForOne(task.UID), task)
 	if err = s.repo.UpdateTask(ctx, uid, "dislikes", task.Dislikes); err != nil {
 		return err
 	}
