@@ -1,7 +1,10 @@
 package pages
 
 
+import "github.com/osamikoyo/math-angel/internal/ui/layouts"
+
 templ NotFound() {
+    @layouts.Page("Not Found") {
         <div class="min-h-screen flex items-center justify-center bg-base-100">
             <div class="max-w-md mx-auto text-center px-6">
                 <div class="mb-8">
@@ -35,4 +38,5 @@ templ NotFound() {
 
             </div>
         </div>
+        }
 }
