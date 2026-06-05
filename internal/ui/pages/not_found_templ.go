@@ -8,6 +8,8 @@ package pages
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
+import "github.com/osamikoyo/math-angel/internal/ui/layouts"
+
 func NotFound() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -29,7 +31,25 @@ func NotFound() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"min-h-screen flex items-center justify-center bg-base-100\"><div class=\"max-w-md mx-auto text-center px-6\"><div class=\"mb-8\"><div class=\"text-[180px] leading-none font-black text-base-300 select-none\">404</div><div class=\"text-6xl -mt-8\">🤔</div></div><h1 class=\"text-5xl font-bold mb-4 text-base-content\">Ой! Задача потерялась</h1><p class=\"text-xl text-base-content/70 mb-10\">Мы не смогли найти страницу, которую вы ищете.</p><div class=\"flex flex-col sm:flex-row gap-4 justify-center\"><a href=\"/\" class=\"btn btn-primary btn-lg px-8\">← На главную</a> <a href=\"/train\" class=\"btn btn-outline btn-lg px-8\">Начать тренировку</a></div><div class=\"mt-16 text-sm text-base-content/50\">Если вы считаете, что это ошибка — напишите нам</div></div></div>")
+		templ_7745c5c3_Var2 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
+			templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
+			templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
+			if !templ_7745c5c3_IsBuffer {
+				defer func() {
+					templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
+					if templ_7745c5c3_Err == nil {
+						templ_7745c5c3_Err = templ_7745c5c3_BufErr
+					}
+				}()
+			}
+			ctx = templ.InitializeContext(ctx)
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"min-h-screen flex items-center justify-center bg-base-100\"><div class=\"max-w-md mx-auto text-center px-6\"><div class=\"mb-8\"><div class=\"text-[180px] leading-none font-black text-base-300 select-none\">404</div><div class=\"text-6xl -mt-8\">🤔</div></div><h1 class=\"text-5xl font-bold mb-4 text-base-content\">Ой! Задача потерялась</h1><p class=\"text-xl text-base-content/70 mb-10\">Мы не смогли найти страницу, которую вы ищете.</p><div class=\"flex flex-col sm:flex-row gap-4 justify-center\"><a href=\"/\" class=\"btn btn-primary btn-lg px-8\">← На главную</a> <a href=\"/train\" class=\"btn btn-outline btn-lg px-8\">Начать тренировку</a></div><div class=\"mt-16 text-sm text-base-content/50\">Если вы считаете, что это ошибка — напишите нам</div></div></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			return nil
+		})
+		templ_7745c5c3_Err = layouts.Page("Not Found").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
