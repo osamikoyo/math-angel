@@ -11,7 +11,8 @@ import (
 
 	"github.com/glebarez/sqlite"
 	"github.com/labstack/echo/v5"
-	"github.com/osamikoyo/math-angel/internal/cash"
+	"github.com/osamikoyo/math-angel/internal/cache"
+	"github.com/osamikoyo/math-angel/internal/cachedrepo"
 	"github.com/osamikoyo/math-angel/internal/config"
 	"github.com/osamikoyo/math-angel/internal/handler"
 	"github.com/osamikoyo/math-angel/internal/importer"
@@ -53,7 +54,9 @@ func SetupApp(configPath string) (*App, error) {
 		return nil, err
 	}
 
-	service := service.NewService(repo, cache, cfg.Timeout)
+	cachedrepo := cachedrepo.NewCachedRepository(repo, cache)
+
+	service := service.NewService(cachedrepo, cfg.Timeout)
 
 	var importer *importer.Importer
 	if cfg.Importer.Enabled {
@@ -179,7 +182,7 @@ func setupRepo(logger *logger.Logger, cfg *config.Config) (*repository.Repositor
 }
 
 // setupCache connects to Redis for caching.
-func setupCache(logger *logger.Logger, cfg *config.Config) (*cash.Cash, error) {
+func setupCache(logger *logger.Logger, cfg *config.Config) (*cache.Cache, error) {
 	client := redis.NewClient(&redis.Options{
 		Addr:     cfg.Redis.Addr,
 		Password: "",
@@ -193,7 +196,7 @@ func setupCache(logger *logger.Logger, cfg *config.Config) (*cash.Cash, error) {
 	}
 
 	logger.Info("redis connected successfully")
-	return cash.NewCash(client, logger, cfg.Redis.ExpTime), nil
+	return cache.NewCache(client, logger, cfg.Redis.ExpTime), nil
 }
 
 // setupImporter initializes the data importer.
