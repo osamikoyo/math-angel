@@ -4,8 +4,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/osamikoyo/math-angel/internal/cachedrepo"
 	selferrors "github.com/osamikoyo/math-angel/internal/errors"
-	"github.com/osamikoyo/math-angel/internal/service"
 
 	"github.com/google/uuid"
 	"github.com/osamikoyo/math-angel/internal/model"
@@ -19,7 +19,7 @@ type Repository struct {
 	db     *gorm.DB
 }
 
-var _ service.Repository = &Repository{}
+var _ cachedrepo.Repository = &Repository{}
 
 func NewRepository(db *gorm.DB, logger *logger.Logger) *Repository {
 	return &Repository{
