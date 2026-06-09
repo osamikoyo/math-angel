@@ -1,6 +1,8 @@
 package model
 
 import (
+	"unicode"
+
 	"github.com/google/uuid"
 	"github.com/osamikoyo/math-angel/internal/errors"
 )
@@ -46,5 +48,15 @@ func (t *Task) Validate() error {
 		return errors.ErrInvalidLevel
 	}
 
+	t.Type = firstToLower(t.Type)
+
 	return nil
+}
+
+func firstToLower(s string) string {
+	if s == "" {
+		return s
+	}
+	r := []rune(s)
+	return string(append([]rune{unicode.ToLower(r[0])}, r[1:]...))
 }
