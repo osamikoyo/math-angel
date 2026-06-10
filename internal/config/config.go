@@ -15,6 +15,7 @@ type Config struct {
 	Timeout  time.Duration `yaml:"timeout"`
 	Redis    Redis         `yaml:"redis"`
 	Importer Importer      `yaml:"importer"`
+	Auth     Auth          `yaml:"auth"`
 }
 
 type Redis struct {
@@ -25,6 +26,11 @@ type Redis struct {
 type Importer struct {
 	Enabled bool   `yaml:"enabled"`
 	File    string `yaml:"file"`
+}
+
+type Auth struct {
+	JWTSecretKey string `yaml:"jwt_secret_key"`
+	TokenTTL     time.Duration `yaml:"token_ttl"`
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -41,6 +47,10 @@ func LoadConfig(path string) (*Config, error) {
 		Importer: Importer{
 			Enabled: false,
 			File:    "math-source/test_source.jsonl",
+		},
+		Auth: Auth{
+			JWTSecretKey: "secret_key",
+			TokenTTL: 30 * time.Minute,
 		},
 	}
 
