@@ -11,14 +11,14 @@ import (
 
 	"github.com/glebarez/sqlite"
 	"github.com/labstack/echo/v5"
-	"github.com/osamikoyo/math-angel/internal/cache"
-	"github.com/osamikoyo/math-angel/internal/cachedrepo"
+	"github.com/osamikoyo/math-angel/internal/task/cache"
+	"github.com/osamikoyo/math-angel/internal/task/cachedrepo"
 	"github.com/osamikoyo/math-angel/internal/config"
-	"github.com/osamikoyo/math-angel/internal/handler"
-	"github.com/osamikoyo/math-angel/internal/importer"
-	"github.com/osamikoyo/math-angel/internal/model"
-	"github.com/osamikoyo/math-angel/internal/repository"
-	"github.com/osamikoyo/math-angel/internal/service"
+	"github.com/osamikoyo/math-angel/internal/task/handler"
+	"github.com/osamikoyo/math-angel/internal/task/importer"
+	"github.com/osamikoyo/math-angel/internal/task/model"
+	"github.com/osamikoyo/math-angel/internal/task/repository"
+	"github.com/osamikoyo/math-angel/internal/task/service"
 	"github.com/osamikoyo/math-angel/pkg/logger"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
@@ -56,7 +56,7 @@ func SetupApp(configPath string) (*App, error) {
 
 	cachedrepo := cachedrepo.NewCachedRepository(repo, cache)
 
-	service := service.NewService(cachedrepo, cfg.Timeout)
+	service := service.NewTaskService(cachedrepo, cfg.Timeout)
 
 	var importer *importer.Importer
 	if cfg.Importer.Enabled {
@@ -200,7 +200,7 @@ func setupCache(logger *logger.Logger, cfg *config.Config) (*cache.Cache, error)
 }
 
 // setupImporter initializes the data importer.
-func setupImporter(service *service.Service, logger *logger.Logger, cfg *config.Config) (*importer.Importer, error) {
+func setupImporter(service *service.TaskService, logger *logger.Logger, cfg *config.Config) (*importer.Importer, error) {
 	importer, err := importer.NewImporter(service, cfg, logger)
 	if err != nil {
 		logger.Error("failed to setup importer", zap.Error(err))
@@ -211,7 +211,7 @@ func setupImporter(service *service.Service, logger *logger.Logger, cfg *config.
 }
 
 // setupEcho configures the Echo framework with routes.
-func setupEcho(service *service.Service, logger *logger.Logger) *echo.Echo {
+func setupEcho(service *service.TaskService, logger *logger.Logger) *echo.Echo {
 	e := echo.New()
 	handler := handler.NewHandler(service)
 	handler.RegisterRouters(e)
