@@ -6,8 +6,8 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/osamikoyo/math-angel/internal/errors"
-	"github.com/osamikoyo/math-angel/internal/model"
-	"github.com/osamikoyo/math-angel/internal/service"
+	"github.com/osamikoyo/math-angel/internal/task/model"
+	"github.com/osamikoyo/math-angel/internal/task/service"
 )
 
 // Repository defines the interface for task persistence operations.
