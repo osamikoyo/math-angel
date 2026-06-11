@@ -5,16 +5,16 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/labstack/echo/v5/middleware"
 
-	"github.com/osamikoyo/math-angel/internal/handler/pagehandlers"
-	"github.com/osamikoyo/math-angel/internal/service"
+	"github.com/osamikoyo/math-angel/internal/task/handler/pagehandlers"
+	"github.com/osamikoyo/math-angel/internal/task/service"
 )
 
 type Handler struct {
-	service *service.Service
+	service *service.TaskService
 	pages   *pagehandlers.PageHandler
 }
 
-func NewHandler(service *service.Service) *Handler {
+func NewHandler(service *service.TaskService) *Handler {
 	return &Handler{
 		service: service,
 		pages:   pagehandlers.NewPageHandler(service),
