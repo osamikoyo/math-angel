@@ -19,3 +19,11 @@ var (
 	ErrEmptyProblem = errors.New("empty problem")
 	ErrInvalidLevel = errors.New("invalid level")
 )
+
+// User service errors
+var (
+	ErrFailedHash = errors.New("failed hashed")
+	ErrEmptyUser = errors.New("empty user")
+	ErrEmptyUsernameOrPassword = errors.New("empty username or password")
+	ErrAuthFailed = errors.New("authentication error")
+)
