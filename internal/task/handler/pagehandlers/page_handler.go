@@ -3,14 +3,14 @@ package pagehandlers
 import (
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v5"
-	"github.com/osamikoyo/math-angel/internal/service"
+	"github.com/osamikoyo/math-angel/internal/task/service"
 )
 
 type PageHandler struct {
-	service *service.Service
+	service *service.TaskService
 }
 
-func NewPageHandler(service *service.Service) *PageHandler {
+func NewPageHandler(service *service.TaskService) *PageHandler {
 	return &PageHandler{
 		service: service,
 	}
