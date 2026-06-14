@@ -10,13 +10,13 @@ import (
 	"unicode"
 
 	"github.com/osamikoyo/math-angel/internal/config"
-	"github.com/osamikoyo/math-angel/internal/service"
+	"github.com/osamikoyo/math-angel/internal/task/service"
 	"github.com/osamikoyo/math-angel/pkg/logger"
 	"go.uber.org/zap"
 )
 
 type Importer struct {
-	service *service.Service
+	service *service.TaskService
 	source  *os.File
 	logger  *logger.Logger
 }
@@ -29,7 +29,7 @@ type Task struct {
 	Boxed    string `json:"boxed"`
 }
 
-func NewImporter(service *service.Service, cfg *config.Config, logger *logger.Logger) (*Importer, error) {
+func NewImporter(service *service.TaskService, cfg *config.Config, logger *logger.Logger) (*Importer, error) {
 	file, err := os.Open(cfg.Importer.File)
 	if err != nil {
 		logger.Error("failed open file with tasks",
@@ -52,6 +52,10 @@ func (im *Importer) Start(ctx context.Context) {
 	var wg sync.WaitGroup
 
 	for scanners.Scan() {
+		if scanners.Err() != nil {
+			break
+		}
+
 		select {
 		case <-ctx.Done():
 			im.logger.Info("stopping importer...")
