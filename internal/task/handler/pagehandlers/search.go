@@ -7,7 +7,7 @@ import (
 
 	"github.com/labstack/echo/v5"
 	"github.com/osamikoyo/math-angel/internal/errors"
-	"github.com/osamikoyo/math-angel/internal/model"
+	"github.com/osamikoyo/math-angel/internal/task/model"
 	"github.com/osamikoyo/math-angel/internal/ui/pages"
 )
 
