@@ -29,7 +29,7 @@ type Importer struct {
 }
 
 type Auth struct {
-	JWTSecretKey string `yaml:"jwt_secret_key"`
+	JWTSecretKey string        `yaml:"jwt_secret_key"`
 	TokenTTL     time.Duration `yaml:"token_ttl"`
 }
 
@@ -50,7 +50,7 @@ func LoadConfig(path string) (*Config, error) {
 		},
 		Auth: Auth{
 			JWTSecretKey: "secret_key",
-			TokenTTL: 30 * time.Minute,
+			TokenTTL:     30 * time.Minute,
 		},
 	}
 
