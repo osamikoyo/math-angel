@@ -17,6 +17,8 @@ type Repository interface {
 	GetTask(ctx context.Context, id uuid.UUID) (*model.Task, error)
 	UpdateTask(ctx context.Context, id uuid.UUID, column string, value any) error
 	SearchTasks(ctx context.Context, query string, limit, offset int) ([]model.TaskSearchResult, error)
+	CreateSolution(ctx context.Context, solution *model.Solution) error
+	GetSolutionByUserAndTaskIDs(ctx context.Context, userID uint, taskID string) (*model.Solution, error)
 }
 
 // Cache defines the interface for caching operations.
@@ -27,6 +29,8 @@ type Cache interface {
 	GetTask(ctx context.Context, key string) (*model.Task, error)
 	SetSearchResults(ctx context.Context, key string, trs []model.TaskSearchResult) error
 	GetSearchResults(ctx context.Context, key string) ([]model.TaskSearchResult, error)
+	SetSolution(ctx context.Context, key string, solution *model.Solution) error
+	GetSolution(ctx context.Context, key string) (*model.Solution, error)
 }
 
 // CachedRepository stores cache and repo logic
@@ -131,6 +135,32 @@ func (cr *CachedRepository) Search(ctx context.Context, query string, pageIndex,
 	return results, nil
 }
 
+func (cr *CachedRepository) CreateSolution(ctx context.Context, solution *model.Solution) error {
+	if err := cr.repo.CreateSolution(ctx, solution); err != nil {
+		return err
+	}
+
+	cr.cache.SetSolution(ctx, getKeyForSolution(solution.UserID, solution.TaskID), solution)
+
+	return nil
+}
+
+func (cr *CachedRepository) GetSolution(ctx context.Context, userID uint, taskID string) (*model.Solution, error) {
+	solution, err := cr.cache.GetSolution(ctx, getKeyForSolution(userID, taskID))
+	if err == nil{
+		return solution, nil
+	}
+
+	solution, err = cr.repo.GetSolutionByUserAndTaskIDs(ctx, userID, taskID)
+	if err != nil{
+		return nil, err
+	}
+
+	cr.cache.SetSolution(ctx, getKeyForSolution(userID, taskID), solution)
+
+	return solution, nil
+} 
+
 // getKeyForMany generates a cache key for multiple tasks by type and level.
 func getKeyForMany(taskType string, level string) string {
 	return fmt.Sprintf("%s:%s", taskType, level)
@@ -143,4 +173,8 @@ func getKeyForOne(key string) string {
 
 func getKeyForSearchQuery(query string) string {
 	return fmt.Sprintf("query:%s", query)
+}
+
+func getKeyForSolution(userID uint, taskID string) string {
+	return fmt.Sprintf("solution:user_id:%d;task_id:%s", userID, taskID)
 }
