@@ -10,7 +10,7 @@ import templruntime "github.com/a-h/templ/runtime"
 
 import (
 	"fmt"
-	"github.com/osamikoyo/math-angel/internal/model"
+	"github.com/osamikoyo/math-angel/internal/task/model"
 	"github.com/osamikoyo/math-angel/internal/ui/layouts"
 )
 
