@@ -2,7 +2,6 @@ package errors
 
 import "errors"
 
-
 // General errors
 var (
 	ErrNotFound     = errors.New("not found")
@@ -24,7 +23,7 @@ var (
 
 // Task errors
 var (
-	ErrEmptyTask    = errors.New("empty task")
+	ErrEmptyTask  = errors.New("empty task")
 	ErrEmptyQuery = errors.New("empty query")
 )
 
@@ -35,6 +34,7 @@ var (
 
 // User service errors
 var (
+	ErrInvalidUserID           = errors.New("invalid user id")
 	ErrFailedHash              = errors.New("failed hashed")
 	ErrEmptyUser               = errors.New("empty user")
 	ErrEmptyUsernameOrPassword = errors.New("empty username or password")
