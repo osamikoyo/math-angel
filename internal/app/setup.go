@@ -8,7 +8,8 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/osamikoyo/math-angel/internal/config"
 	"github.com/osamikoyo/math-angel/internal/task/cache"
-	"github.com/osamikoyo/math-angel/internal/task/handler"
+	taskhandler"github.com/osamikoyo/math-angel/internal/task/handler"
+	userhandler "github.com/osamikoyo/math-angel/internal/user/handler"
 	"github.com/osamikoyo/math-angel/internal/task/importer"
 	"github.com/osamikoyo/math-angel/internal/task/model"
 	taskrepo "github.com/osamikoyo/math-angel/internal/task/repository"
@@ -98,9 +99,11 @@ func setupImporter(service *taskservice.TaskService, logger *logger.Logger, cfg 
 func setupEcho(taskservice *taskservice.TaskService, userservice *userservice.Service, logger *logger.Logger) *echo.Echo {
 	e := echo.New()
 	mw := middleware.NewMiddleware(userservice)
-	handler := handler.NewHandler(taskservice, mw)
+	taskhandler := taskhandler.NewHandler(taskservice, mw)
+	userhandler := userhandler.NewHandler(mw, userservice)
 
-	handler.RegisterRouters(e)
+	userhandler.RegisterRouters(e)
+	taskhandler.RegisterRouters(e)
 
 	logger.Info("echo configured successfully")
 	return e
