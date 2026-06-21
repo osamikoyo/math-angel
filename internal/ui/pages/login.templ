@@ -1,0 +1,115 @@
+package pages
+
+import "github.com/osamikoyo/math-angel/internal/ui/layouts"
+
+templ Login() {
+    @layouts.Page("Вход — Math-Angel") {
+        <div class="min-h-screen flex items-center justify-center px-4 py-12 bg-base-950">
+            <div class="max-w-md w-full">
+                <div class="card bg-base-900 shadow-2xl">
+                    <div class="card-body">
+                        <!-- Заголовок -->
+                        <div class="text-center mb-8">
+                            <div class="text-5xl mb-4">🔑</div>
+                            <h1 class="text-3xl font-bold">Вход в аккаунт</h1>
+                            <p class="text-base-content/60 mt-2">Решай задачи вместе с нами</p>
+                        </div>
+
+                        <!-- Форма логина -->
+                        <form 
+                            hx-post="/auth/login" 
+                            hx-swap="none"
+                            hx-on::after-request="handleLoginResponse(event)"
+                            class="space-y-6">
+
+                            <!-- Username или Email -->
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Имя пользователя</span>
+                                </label>
+                                <input 
+                                    type="text" 
+                                    name="username"
+                                    placeholder="math_angel_42 или you@example.com"
+                                    class="input input-bordered w-full bg-base-800 focus:input-primary"
+                                    required
+                                    autocomplete="username email" />
+                            </div>
+
+                            <!-- Password -->
+                            <div class="form-control">
+                                <label class="label">
+                                    <span class="label-text">Пароль</span>
+                                </label>
+                                <input 
+                                    type="password" 
+                                    name="password"
+                                    placeholder="••••••••"
+                                    class="input input-bordered w-full bg-base-800 focus:input-primary"
+                                    required
+                                    minlength="6"
+                                    autocomplete="current-password" />
+                            </div>
+
+                            <!-- Кнопка входа -->
+                            <button 
+                                type="submit"
+                                class="btn btn-primary btn-block text-lg h-12 mt-6">
+                                Войти
+                            </button>
+                        </form>
+
+                        <!-- Дополнительные ссылки -->
+                        <div class="flex justify-between text-sm mt-4">
+                            <a href="/register" class="text-primary hover:underline">
+                                Создать аккаунт
+                            </a>
+                        </div>
+
+                        <!-- Разделитель (если захочешь добавить позже) -->
+                        <!-- <div class="divider my-6">или</div> -->
+                    </div>
+                </div>
+
+                <!-- Подвал -->
+                <p class="text-center text-xs text-base-content/40 mt-8">
+                    Math-Angel © 2026
+                </p>
+            </div>
+        </div>
+
+        <!-- Встроенный JavaScript -->
+        <script>
+            function handleLoginResponse(evt) {
+                if (evt.detail.successful) {
+                    // Успешный вход
+                    const toast = document.createElement('div');
+                    toast.className = "fixed bottom-5 right-5 bg-success text-success-content px-6 py-3 rounded-xl shadow-2xl flex items-center gap-2 z-50";
+                    toast.innerHTML = `
+                        ✅ Добро пожаловать обратно!<br>
+                        <span class="text-sm">Перенаправляем в личный кабинет...</span>
+                    `;
+                    document.body.appendChild(toast);
+
+                    setTimeout(() => {
+                        window.location.href = "/profile";  // или /dashboard /train
+                    }, 1200);
+                } else {
+                    // Ошибка
+                    let message = "Неверное имя пользователя или пароль";
+                    
+                    try {
+                        message = evt.detail.xhr.responseText || message;
+                    } catch(e) {}
+
+                    const toast = document.createElement('div');
+                    toast.className = "fixed bottom-5 right-5 bg-error text-error-content px-6 py-3 rounded-xl shadow-xl z-50";
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+
+                    setTimeout(() => toast.remove(), 4500);
+                }
+            }
+        </script>
+    }
+}
