@@ -8,13 +8,14 @@ import (
 	"github.com/labstack/echo/v5"
 	"github.com/osamikoyo/math-angel/internal/config"
 	"github.com/osamikoyo/math-angel/internal/task/cache"
-	taskhandler"github.com/osamikoyo/math-angel/internal/task/handler"
-	userhandler "github.com/osamikoyo/math-angel/internal/user/handler"
+	taskhandler "github.com/osamikoyo/math-angel/internal/task/handler"
 	"github.com/osamikoyo/math-angel/internal/task/importer"
-	"github.com/osamikoyo/math-angel/internal/task/model"
+	taskmodel "github.com/osamikoyo/math-angel/internal/task/model"
 	taskrepo "github.com/osamikoyo/math-angel/internal/task/repository"
 	taskservice "github.com/osamikoyo/math-angel/internal/task/service"
+	userhandler "github.com/osamikoyo/math-angel/internal/user/handler"
 	"github.com/osamikoyo/math-angel/internal/user/handler/middleware"
+	usermodel "github.com/osamikoyo/math-angel/internal/user/model"
 	userrepo "github.com/osamikoyo/math-angel/internal/user/repository"
 	userservice "github.com/osamikoyo/math-angel/internal/user/service"
 	"github.com/osamikoyo/math-angel/pkg/logger"
@@ -49,7 +50,7 @@ func setupRepos(logger *logger.Logger, cfg *config.Config) (*taskrepo.Repository
 		return nil, nil, fmt.Errorf("failed connect to db: %w", err)
 	}
 
-	if err := db.AutoMigrate(&model.Task{}); err != nil {
+	if err := db.AutoMigrate(&taskmodel.Task{}, &usermodel.User{}, &usermodel.Profile{}); err != nil {
 		logger.Error("migration failed",
 			zap.Error(err))
 
