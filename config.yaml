@@ -10,3 +10,7 @@
   importer:
     enabled: false
     file: "math-source/test_source.jsonl"
+
+  auth:
+    jwt_secret_key: "secret"
+    token_ttl: 30m
