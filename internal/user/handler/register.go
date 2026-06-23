@@ -9,9 +9,9 @@ import (
 )
 
 type RegisterRequest struct {
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	Email    string `yaml:"email"`
+	Username string `form:"username" json:"username"`
+	Password string `form:"password" json:"password"`
+	Email    string `form:"email" json:"email"`
 }
 
 func (h *Handler) Register(c *echo.Context) error {
