@@ -6,6 +6,8 @@ import (
 
 	"github.com/glebarez/sqlite"
 	"github.com/labstack/echo/v5"
+
+	echomw "github.com/labstack/echo/v5/middleware"
 	"github.com/osamikoyo/math-angel/internal/config"
 	"github.com/osamikoyo/math-angel/internal/task/cache"
 	taskhandler "github.com/osamikoyo/math-angel/internal/task/handler"
@@ -99,6 +101,8 @@ func setupImporter(service *taskservice.TaskService, logger *logger.Logger, cfg 
 // setupEcho configures the Echo framework with routes.
 func setupEcho(taskservice *taskservice.TaskService, userservice *userservice.Service, logger *logger.Logger) *echo.Echo {
 	e := echo.New()
+	e.Use(echomw.RequestLogger())
+
 	mw := middleware.NewMiddleware(userservice)
 	taskhandler := taskhandler.NewHandler(taskservice, mw)
 	userhandler := userhandler.NewHandler(mw, userservice)
