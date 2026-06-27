@@ -3,7 +3,6 @@ package handler
 import (
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v5"
-	"github.com/labstack/echo/v5/middleware"
 
 	"github.com/osamikoyo/math-angel/internal/task/handler/pagehandlers"
 	"github.com/osamikoyo/math-angel/internal/task/service"
@@ -33,7 +32,7 @@ func renderWithStatus(c *echo.Context, status int, component templ.Component) er
 func (h *Handler) RegisterRouters(e *echo.Echo) {
 	e.GET("/healthcheck", h.HealthCheck)
 
-	taskGroup := e.Group("/task", middleware.RequestLogger())
+	taskGroup := e.Group("/task")
 
 	// page handlers
 
