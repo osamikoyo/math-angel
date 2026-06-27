@@ -13,4 +13,4 @@
 
   auth:
     jwt_secret_key: "secret"
-    token_ttl: 30m
+    token_ttl: 30h
