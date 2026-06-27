@@ -151,7 +151,7 @@ func ProfilePage(profile *model.Profile) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" max=\"100\"></progress></div></div></div><!-- Дополнительная информация / достижения --><div class=\"mt-10\"><h2 class=\"text-2xl font-bold mb-6\">Достижения</h2><div class=\"grid grid-cols-2 md:grid-cols-4 gap-4\"><div class=\"card bg-base-900 p-6 text-center\"><div class=\"text-4xl mb-3\">🏆</div><div class=\"font-semibold\">Первый шаг</div><div class=\"text-sm text-base-content/60\">Решена первая задача</div></div><!-- Добавляй новые достижения динамически позже --></div></div><!-- Кнопки действий --><div class=\"flex gap-4 justify-center mt-12\"><button hx-get=\"/profile/edit\" hx-swap=\"innerHTML\" class=\"btn btn-primary btn-lg\">Редактировать профиль</button> <button hx-post=\"/auth/logout\" class=\"btn btn-outline btn-lg\">Выйти</button></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "\" max=\"100\"></progress></div></div></div><div class=\"mt-10\"><h2 class=\"text-2xl font-bold mb-6\">Достижения</h2><div class=\"grid grid-cols-2 md:grid-cols-4 gap-4\"><div class=\"card bg-base-900 p-6 text-center\"><div class=\"text-4xl mb-3\">🏆</div><div class=\"font-semibold\">Первый шаг</div><div class=\"text-sm text-base-content/60\">Решена первая задача</div></div><!-- Добавляй новые достижения динамически позже --></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
