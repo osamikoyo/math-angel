@@ -17,7 +17,7 @@ templ Login() {
 
                         <!-- Форма логина -->
                         <form 
-                            hx-post="/auth/login" 
+                            hx-post="/login" 
                             hx-swap="none"
                             hx-on::after-request="handleLoginResponse(event)"
                             class="space-y-6">
@@ -65,20 +65,15 @@ templ Login() {
                                 Создать аккаунт
                             </a>
                         </div>
-
-                        <!-- Разделитель (если захочешь добавить позже) -->
-                        <!-- <div class="divider my-6">или</div> -->
                     </div>
                 </div>
 
-                <!-- Подвал -->
                 <p class="text-center text-xs text-base-content/40 mt-8">
                     Math-Angel © 2026
                 </p>
             </div>
         </div>
 
-        <!-- Встроенный JavaScript -->
         <script>
             function handleLoginResponse(evt) {
                 if (evt.detail.successful) {
@@ -92,7 +87,7 @@ templ Login() {
                     document.body.appendChild(toast);
 
                     setTimeout(() => {
-                        window.location.href = "/profile";  // или /dashboard /train
+                        window.location.href = "/profile";  
                     }, 1200);
                 } else {
                     // Ошибка
