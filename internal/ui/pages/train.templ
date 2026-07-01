@@ -1,73 +1,142 @@
 package pages
 
-import "github.com/osamikoyo/math-angel/internal/ui/layouts"
+import (
+    "github.com/osamikoyo/math-angel/internal/task/model"
+    "github.com/osamikoyo/math-angel/internal/ui/layouts"
+	"fmt"
+)
 
-templ TrainPage() {
-	@layouts.Page("Тренировка — Math-Angel") {
-		<div class="min-h-screen bg-base-950 py-12">
-			<div class="max-w-5xl mx-auto px-6">
-				<div class="text-center mb-16">
-					<h1 class="text-5xl font-bold mb-4">Выбери тренировку</h1>
-				</div>
+// Полная страница (с layout)
+templ TrainPage(tasks []model.Task, pageSize, pageIndex int, currentType, currentLevel string) {
+    @layouts.Page("Тренировка — Math-Angel") {
+        @TrainContent(tasks, pageSize, pageIndex, currentType, currentLevel)
+    }
+}
 
-				<div class="grid lg:grid-cols-2 gap-12">
-					<div>
-						<h2 class="text-3xl font-semibold mb-8 flex items-center gap-3">📚 Тип задания</h2>
-						<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-							<a href="/task/get/random/algebra/level/all" class="card bg-base-900 hover:bg-base-800 border border-base-700 hover:border-primary p-8 rounded-3xl transition-all group">
-								<div class="text-5xl mb-6 group-hover:scale-110 transition-transform">📐</div>
-								<h3 class="text-2xl font-semibold">Алгебра</h3>
-								<p class="text-base-content/70 mt-2">Уравнения, функции, последовательности</p>
-							</a>
-							<a href="/task/get/random/geometry/level/medium" class="card bg-base-900 hover:bg-base-800 border border-base-700 hover:border-primary p-8 rounded-3xl transition-all group">
-								<div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🔺</div>
-								<h3 class="text-2xl font-semibold">Геометрия</h3>
-								<p class="text-base-content/70 mt-2">Фигуры, площади, тригонометрия</p>
-							</a>
-						</div>
-					</div>
+// Только контент (используется при HTMX запросах)
+templ TrainContent(tasks []model.Task, pageSize, pageIndex int, currentType, currentLevel string) {
+    <div class="max-w-7xl mx-auto px-4 py-10">
+        
+        <div class="flex flex-col lg:flex-row justify-between items-start gap-6 mb-10">
+            <div>
+                <h1 class="text-4xl font-bold">Тренировка</h1>
+                <p class="text-base-content/70 mt-2">Выберите задачи и оттачивайте навыки</p>
+            </div>
 
-					<div>
-						<h2 class="text-3xl font-semibold mb-8 flex items-center gap-3">📊 Сложность</h2>
-						<div class="space-y-5">
-							<a href="/task/get/random/all/level/easy" class="block card bg-base-900 hover:bg-base-800 border border-emerald-500/30 p-7 rounded-3xl transition-all">
-								<div class="flex items-center gap-6">
-									<div class="text-5xl">😊</div>
-									<div>
-										<div class="text-2xl font-bold text-emerald-400">Лёгкий</div>
-										<p class="text-base-content/70">Для уверенного старта</p>
-									</div>
-								</div>
-							</a>
-							<a href="/task/get/random/all/level/medium" class="block card bg-base-900 hover:bg-base-800 border border-yellow-500/30 p-7 rounded-3xl transition-all">
-								<div class="flex items-center gap-6">
-									<div class="text-5xl">😐</div>
-									<div>
-										<div class="text-2xl font-bold text-yellow-400">Средний</div>
-										<p class="text-base-content/70">Основной уровень</p>
-									</div>
-								</div>
-							</a>
-							<a href="/task/get/random/all/level/hard" class="block card bg-base-900 hover:bg-base-800 border border-red-500/30 p-7 rounded-3xl transition-all">
-								<div class="flex items-center gap-6">
-									<div class="text-5xl">😤</div>
-									<div>
-										<div class="text-2xl font-bold text-red-400">Сложный</div>
-										<p class="text-base-content/70">Олимпиадный уровень</p>
-									</div>
-								</div>
-							</a>
-						</div>
-					</div>
-				</div>
+            <a href="/task/get/random/all/level/all" 
+               class="btn btn-primary btn-lg flex items-center gap-3">
+                <span class="text-2xl">🎲</span>
+                Случайная задача
+            </a>
+        </div>
 
-				<div class="mt-20 text-center">
-					<a href="/task/get/random/all/level/all" class="btn btn-primary btn-xl px-16 py-8 text-xl rounded-3xl shadow-2xl hover:scale-105 transition-all inline-flex items-center gap-4">
-						<span class="text-3xl">🎲</span>
-						Случайная задача от Ангела
-					</a>
-				</div>
-			</div>
-		</div>
-	}
+        <!-- Фильтры -->
+        <div class="card bg-base-900 p-6 mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="label"><span class="label-text font-medium">Тип задачи</span></label>
+                    <select id="type-filter" 
+                            hx-get="/train"
+                            hx-trigger="change"
+                            hx-target="#tasks-container"
+                            hx-include="#level-filter"
+                            name="type"
+                            class="select select-bordered w-full">
+                        <option value="all" selected={currentType == "all" || currentType == ""}>Все типы</option>
+                        <option value="algebra" selected={currentType == "algebra"}>Алгебра</option>
+                        <option value="geometry" selected={currentType == "geometry"}>Геометрия</option>
+                        <option value="combinatorics" selected={currentType == "combinatorics"}>Комбинаторика</option>
+                        <option value="number theory" selected={currentType == "number theory"}>Теория чисел</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="label"><span class="label-text font-medium">Сложность</span></label>
+                    <select id="level-filter"
+                            hx-get="/train"
+                            hx-trigger="change"
+                            hx-target="#tasks-container"
+                            hx-include="#type-filter"
+                            name="level"
+                            class="select select-bordered w-full">
+                        <option value="all" selected={currentLevel == "all" || currentLevel == ""}>Любой уровень</option>
+                        <option value="easy" selected={currentLevel == "easy"}>Лёгкий</option>
+                        <option value="medium" selected={currentLevel == "medium"}>Средний</option>
+                        <option value="hard" selected={currentLevel == "hard"}>Сложный</option>
+                    </select>
+                </div>
+
+                <div class="flex items-end">
+                    <button hx-get="/train" 
+                            hx-target="#tasks-container"
+                            class="btn btn-outline w-full">
+                        Сбросить фильтры
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Основной контент задач -->
+        <div id="tasks-container">
+            @TasksGrid(tasks, pageSize, pageIndex, currentType, currentLevel)
+        </div>
+    </div>
+}
+
+// Сетка задач + пагинация
+templ TasksGrid(tasks []model.Task, pageSize, pageIndex int, currentType, currentLevel string) {
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        for _, task := range tasks {
+            <div class="card bg-base-900 hover:bg-base-800 border border-base-700 hover:border-primary transition-all">
+                <div class="card-body">
+                    <div class="flex justify-between mb-4">
+                        <span class="badge badge-primary">{ task.Type }</span>
+                    </div>
+
+                    <h3 class="line-clamp-3 text-lg font-medium leading-tight mb-5 min-h-[4.2em] katex-content">
+                        { task.Problem }
+                    </h3>
+
+                    if task.Boxed != "" {
+                        <div class="mb-6">
+                            <p class="text-xs text-base-content/60 mb-1">Ответ</p>
+                            <div class="font-mono text-xl font-bold text-primary katex-content">
+                                { task.Boxed }
+                            </div>
+                        </div>
+                    }
+
+                    <div class="flex items-center justify-between pt-4 border-t border-base-700">
+                        <div class="flex gap-4 text-sm">
+                            ❤️ { task.Likes } 💔 { task.Dislikes }
+                        </div>
+                        <a href={ fmt.Sprintf("/task/get/%s", task.UID) } 
+                           class="btn btn-sm btn-primary">Решить</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    if len(tasks) > 0 {
+        <div class="flex justify-center mt-12">
+            <div class="join">
+                if pageIndex > 0 {
+                    <a href={ buildTrainURL(pageIndex-1, pageSize, currentType, currentLevel) }
+                       hx-get={ buildTrainURL(pageIndex-1, pageSize, currentType, currentLevel) }
+                       hx-target="#tasks-container"
+                       class="join-item btn btn-outline">← Назад</a>
+                }
+                <button class="join-item btn btn-active">Страница { pageIndex + 1 }</button>
+                <a href={ buildTrainURL(pageIndex+1, pageSize, currentType, currentLevel) }
+                   hx-get={ buildTrainURL(pageIndex+1, pageSize, currentType, currentLevel) }
+                   hx-target="#tasks-container"
+                   class="join-item btn btn-outline">Вперёд →</a>
+            </div>
+        </div>
+    }
+}
+
+func buildTrainURL(page, size int, tType, level string) string {
+    return fmt.Sprintf("/train?page=%d&size=%d&type=%s&level=%s", page, size, tType, level)
 }
