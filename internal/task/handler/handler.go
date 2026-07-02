@@ -12,14 +12,14 @@ import (
 type Handler struct {
 	service *service.TaskService
 	pages   *pagehandlers.PageHandler
-	mw *selfmw.Middleware
+	mw      *selfmw.Middleware
 }
 
 func NewHandler(service *service.TaskService, mw *selfmw.Middleware) *Handler {
 	return &Handler{
 		service: service,
 		pages:   pagehandlers.NewPageHandler(service),
-		mw: mw,
+		mw:      mw,
 	}
 }
 
