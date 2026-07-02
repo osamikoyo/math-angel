@@ -25,22 +25,21 @@ func (h *PageHandler) GetTask(c *echo.Context) error {
 	}
 
 	var (
-		solved = false
+		solved   = false
 		solvedAt = time.Time{}
 	)
 
 	user_id, ok := c.Get("user_id").(uint)
 	if ok {
 		solved = true
-		
+
 		sAt, err := h.service.TaskSolvedBy(c.Request().Context(), id, user_id)
-		if err != nil{
+		if err != nil {
 			return c.String(http.StatusInternalServerError, err.Error())
 		}
 
 		solvedAt = sAt
 	}
-
 
 	return renderWithStatus(c, http.StatusOK, pages.TaskPage(&pages.Task{
 		Type:     task.Type,
@@ -52,7 +51,7 @@ func (h *PageHandler) GetTask(c *echo.Context) error {
 		Likes:    int(task.Likes),
 		Dislikes: int(task.Dislikes),
 
-		Solved: solved,
+		Solved:   solved,
 		SolvedAt: solvedAt,
 	}))
 }
