@@ -147,19 +147,19 @@ func (cr *CachedRepository) CreateSolution(ctx context.Context, solution *model.
 
 func (cr *CachedRepository) GetSolution(ctx context.Context, userID uint, taskID string) (*model.Solution, error) {
 	solution, err := cr.cache.GetSolution(ctx, getKeyForSolution(userID, taskID))
-	if err == nil{
+	if err == nil {
 		return solution, nil
 	}
 
 	solution, err = cr.repo.GetSolutionByUserAndTaskIDs(ctx, userID, taskID)
-	if err != nil{
+	if err != nil {
 		return nil, err
 	}
 
 	cr.cache.SetSolution(ctx, getKeyForSolution(userID, taskID), solution)
 
 	return solution, nil
-} 
+}
 
 // getKeyForMany generates a cache key for multiple tasks by type and level.
 func getKeyForMany(taskType string, level string) string {
