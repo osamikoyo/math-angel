@@ -46,10 +46,10 @@ func (r *Repository) GetSolutionByUserAndTaskIDs(ctx context.Context, userID uin
 		r.logger.Error("failed get solution",
 			zap.Uint("user_id", userID),
 			zap.String("task_id", taskID))
-	
+
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, selferrors.ErrNotFound
-		}	
+		}
 
 		return nil, selferrors.ErrUnknown
 	}
