@@ -269,7 +269,7 @@ func (s *TaskService) CreateSolution(reqCtx context.Context, taskID string, user
 
 	solution := model.NewSolution(taskID, userID)
 
-	if err := s.cachedrepo.CreateSolution(ctx, solution);err != nil{
+	if err := s.cachedrepo.CreateSolution(ctx, solution); err != nil {
 		return err
 	}
 
@@ -281,7 +281,7 @@ func (s *TaskService) TaskSolvedBy(reqCtx context.Context, taskID string, userID
 	defer cancel()
 
 	solution, err := s.cachedrepo.GetSolution(ctx, userID, taskID)
-	if err != nil{
+	if err != nil {
 		return time.Time{}, err
 	}
 
