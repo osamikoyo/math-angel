@@ -30,14 +30,14 @@ func (h *Handler) Login(c *echo.Context) error {
 	}
 
 	c.SetCookie(&http.Cookie{
-        Name:     "access_token",
-        Value:    token,
-        Path:     "/",
-        HttpOnly: true,
-        Secure:   false, 
-        SameSite: http.SameSiteLaxMode,
-        MaxAge:   3600 * 24 * 7,
-    })
+		Name:     "access_token",
+		Value:    token,
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   false,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   3600 * 24 * 7,
+	})
 
 	return c.JSON(http.StatusOK,
 		map[string]interface{}{
