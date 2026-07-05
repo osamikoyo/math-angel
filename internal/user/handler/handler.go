@@ -7,22 +7,22 @@ import (
 	"github.com/osamikoyo/math-angel/internal/user/service"
 )
 
-type Handler struct{
-	mw *middleware.Middleware
-	service *service.Service
+type Handler struct {
+	mw           *middleware.Middleware
+	service      *service.Service
 	pagehandlers *pagehandlers.PageHandler
 }
 
 func NewHandler(mw *middleware.Middleware, service *service.Service) *Handler {
 	return &Handler{
-		mw: mw,
-		service: service,
+		mw:           mw,
+		service:      service,
 		pagehandlers: pagehandlers.NewPageHandler(service),
 	}
 }
 
 func (h *Handler) RegisterRouters(e *echo.Echo) {
-	// page handlers 
+	// page handlers
 	e.GET("/profile", h.pagehandlers.GetProfile, h.mw.Auth)
 	e.GET("/register", h.pagehandlers.RegisterPage)
 	e.GET("/login", h.pagehandlers.Login)
@@ -30,5 +30,5 @@ func (h *Handler) RegisterRouters(e *echo.Echo) {
 	// func handlers
 	e.POST("/register", h.Register)
 	e.POST("/login", h.Login)
-	e.POST("/task/solved/:task_id", h.TaskSolved)
+	e.POST("/task/solved/:task_id", h.TaskSolved, h.mw.MayAuth)
 }
