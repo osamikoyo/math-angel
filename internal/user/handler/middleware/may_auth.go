@@ -18,12 +18,12 @@ func (mw *Middleware) MayAuth(next echo.HandlerFunc) echo.HandlerFunc {
 				return next(c)
 			}
 		}
-		 
+
 		ctx := c.Request().Context()
 
-        userID, err :=  mw.service.Validate(ctx, tokenString.Value)
-		if err == nil{
-			c.Set("user_id", userID)	
+		userID, err := mw.service.Validate(ctx, tokenString.Value)
+		if err == nil {
+			c.Set("user_id", userID)
 		}
 
 		return next(c)
