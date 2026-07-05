@@ -17,11 +17,11 @@ type RegisterRequest struct {
 func (h *Handler) Register(c *echo.Context) error {
 	var req RegisterRequest
 
-	if err := c.Bind(&req);err != nil{
+	if err := c.Bind(&req); err != nil {
 		return c.String(http.StatusBadRequest, "failed parse request")
 	}
 
-	if err := h.service.RegisterUser(c.Request().Context(), req.Username, req.Email, req.Password);err != nil{
+	if err := h.service.RegisterUser(c.Request().Context(), req.Username, req.Email, req.Password); err != nil {
 		if errors.Is(err, selferrors.ErrAlreadyExist) {
 			return c.String(http.StatusConflict, err.Error())
 		}
