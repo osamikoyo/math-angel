@@ -6,7 +6,7 @@ import (
 	"github.com/osamikoyo/math-angel/internal/user/service"
 )
 
-type PageHandler struct{
+type PageHandler struct {
 	service *service.Service
 }
 
