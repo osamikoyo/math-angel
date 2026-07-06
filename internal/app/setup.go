@@ -52,7 +52,7 @@ func setupRepos(logger *logger.Logger, cfg *config.Config) (*taskrepo.Repository
 		return nil, nil, fmt.Errorf("failed connect to db: %w", err)
 	}
 
-	if err := db.AutoMigrate(&taskmodel.Task{}, &usermodel.User{}, &usermodel.Profile{}); err != nil {
+	if err := db.AutoMigrate(&taskmodel.Task{}, &usermodel.User{}, &usermodel.Profile{}, &taskmodel.Solution{}); err != nil {
 		logger.Error("migration failed",
 			zap.Error(err))
 
