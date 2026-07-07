@@ -2,10 +2,11 @@ package pagehandlers
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/labstack/echo/v5"
-	"github.com/osamikoyo/math-angel/internal/errors"
+	selferrors "github.com/osamikoyo/math-angel/internal/errors"
 	"github.com/osamikoyo/math-angel/internal/ui/pages"
 )
 
@@ -15,9 +16,9 @@ func (h *PageHandler) GetTask(c *echo.Context) error {
 	task, err := h.service.GetTask(c.Request().Context(), id)
 	if err != nil {
 		switch err {
-		case errors.ErrBadUID:
+		case selferrors.ErrBadUID:
 			return c.String(http.StatusBadRequest, err.Error())
-		case errors.ErrNotFound:
+		case selferrors.ErrNotFound:
 			return renderWithStatus(c, http.StatusNotFound, pages.NotFound())
 		default:
 			return c.String(http.StatusInternalServerError, err.Error())
@@ -29,16 +30,19 @@ func (h *PageHandler) GetTask(c *echo.Context) error {
 		solvedAt = time.Time{}
 	)
 
-	user_id, ok := c.Get("user_id").(uint)
-	if ok {
-		solved = true
-
-		sAt, err := h.service.TaskSolvedBy(c.Request().Context(), id, user_id)
-		if err != nil {
-			return c.String(http.StatusInternalServerError, err.Error())
+	
+	user_idAny := c.Get("user_id")
+	if user_idAny != nil {
+		user_id, err := strconv.Atoi(user_idAny.(string))
+		if err != nil{
+			return c.String(http.StatusBadRequest, "bad user id")
 		}
 
-		solvedAt = sAt
+		sAt, err := h.service.TaskSolvedBy(c.Request().Context(), task.UID, uint(user_id))
+		if err == nil{
+			solved = true
+			solvedAt = sAt
+		}
 	}
 
 	return renderWithStatus(c, http.StatusOK, pages.TaskPage(&pages.Task{
