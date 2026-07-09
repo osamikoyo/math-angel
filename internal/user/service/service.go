@@ -3,7 +3,9 @@ package service
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
+	"unicode"
 
 	"github.com/google/uuid"
 	"github.com/osamikoyo/math-angel/internal/config"
@@ -28,13 +30,25 @@ type TaskCachedRepo interface {
 	GetTasks(ctx context.Context, taskType, level string) ([]taskmodel.Task, error)
 	Search(ctx context.Context, query string, pageIndex, pageSize int) ([]taskmodel.TaskSearchResult, error)
 	UpdateTask(ctx context.Context, uid uuid.UUID, column string, value any) error
+	CreateSolution(ctx context.Context, solution *taskmodel.Solution) error
+	GetSolution(ctx context.Context, userID uint, taskID string) (*taskmodel.Solution, error)
 }
+
 type Service struct {
-	userRepo UserRepository
+	userRepo       UserRepository
 	taskCachedRepo TaskCachedRepo
 
 	config  *config.Config
 	timeout time.Duration
+}
+
+func NewService(userrepo UserRepository, taskCachedRepo TaskCachedRepo, config *config.Config, timeout time.Duration) *Service {
+	return &Service{
+		userRepo:       userrepo,
+		taskCachedRepo: taskCachedRepo,
+		config:         config,
+		timeout:        timeout,
+	}
 }
 
 func (s *Service) AuthenticateUser(reqCtx context.Context, username, password string) (bool, string, error) {
@@ -114,38 +128,71 @@ func (s *Service) Validate(reqCtx context.Context, tokenString string) (string, 
 	return id, nil
 }
 
-func (s *Service) TaskSolved(reqCtx context.Context,userID uint, taskID uuid.UUID) error {
+func (s *Service) TaskSolved(reqCtx context.Context, userID uint, taskID uuid.UUID) error {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
 	defer cancel()
 
 	user, err := s.userRepo.GetUserByID(ctx, userID)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
 	task, err := s.taskCachedRepo.GetTask(ctx, taskID)
-	if err != nil{
+	if err != nil {
 		return err
 	}
+
+	task.Level = firstToLower(task.Level)
 
 	column := ""
 	value := uint(0)
 
-	switch task.Type{
+	switch task.Level {
 	case "easy":
 		column = "easy_tasks_solved"
-		value = user.Profile.EasyTasksSolved+1
+		value = user.Profile.EasyTasksSolved + 1
 	case "medium":
 		column = "medium_tasks_solved"
-		value = user.Profile.MediumTasksSolved+1
+		value = user.Profile.MediumTasksSolved + 1
 	case "hard":
 		column = "hard_tasks_solved"
-		value = user.Profile.HardTasksSolved+1
+		value = user.Profile.HardTasksSolved + 1
+	default:
+		log.Print("invalid level: ", task.Type)
+
+		return errors.ErrInvalidLevel
 	}
 
-	if err = s.userRepo.UpdateProfile(ctx, userID, column, value);err != nil{
+	if err = s.userRepo.UpdateProfile(ctx, userID, column, value); err != nil {
+		return err
+	}
+
+	solution := taskmodel.NewSolution(taskID.String(), userID)
+
+	err = s.taskCachedRepo.CreateSolution(ctx, solution)
+	if err != nil{
 		return err
 	}
 
 	return nil
+}
+
+func (s *Service) GetProfile(reqCtx context.Context, userID uint) (*model.Profile, error) {
+	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
+	defer cancel()
+
+	user, err := s.userRepo.GetUserByID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return user.Profile, nil
+}
+
+func firstToLower(s string) string {
+	if s == "" {
+		return s
+	}
+	r := []rune(s)
+	return string(append([]rune{unicode.ToLower(r[0])}, r[1:]...))
 }
