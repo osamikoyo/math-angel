@@ -2,7 +2,6 @@ import 'htmx.org';
 
 let isRefreshing = false;
 
-
 document.addEventListener('htmx:responseError', async function (evt) {
     if (evt.detail.xhr.status === 401 && !isRefreshing) {
         isRefreshing = true;
