@@ -31,4 +31,5 @@ func (h *Handler) RegisterRouters(e *echo.Echo) {
 	e.POST("/register", h.Register)
 	e.POST("/login", h.Login)
 	e.POST("/task/solved/:task_id", h.TaskSolved, h.mw.MayAuth)
+	e.POST("/refresh", h.RefreshToken, h.mw.Auth)
 }
