@@ -30,16 +30,15 @@ func (h *PageHandler) GetTask(c *echo.Context) error {
 		solvedAt = time.Time{}
 	)
 
-	
 	user_idAny := c.Get("user_id")
 	if user_idAny != nil {
 		user_id, err := strconv.Atoi(user_idAny.(string))
-		if err != nil{
+		if err != nil {
 			return c.String(http.StatusBadRequest, "bad user id")
 		}
 
 		sAt, err := h.service.TaskSolvedBy(c.Request().Context(), task.UID, uint(user_id))
-		if err == nil{
+		if err == nil {
 			solved = true
 			solvedAt = sAt
 		}
