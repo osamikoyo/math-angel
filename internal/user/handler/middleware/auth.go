@@ -6,10 +6,11 @@ import (
 	"strings"
 
 	"github.com/labstack/echo/v5"
+	"github.com/osamikoyo/math-angel/internal/ui/pages"
 )
 
 func (mw *Middleware) Auth(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c *echo.Context) error {  
+	return func(c *echo.Context) error {
 		var tokenValue string
 
 		cookie, err := c.Cookie("access_token")
@@ -33,9 +34,8 @@ func (mw *Middleware) Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		userID, err := mw.service.Validate(ctx, tokenValue)
 		if err != nil {
 			log.Printf("validate error: %s", err.Error())
-			return c.JSON(http.StatusUnauthorized, map[string]string{
-				"error": "invalid or expired token",
-			})
+
+			return renderWithStatus(c, http.StatusUnauthorized, pages.Register())
 		}
 
 		c.Set("user_id", userID)
