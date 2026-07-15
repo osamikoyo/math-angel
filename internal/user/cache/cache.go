@@ -3,9 +3,9 @@ package cache
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"time"
 
-	"errors"
 	selferrors "github.com/osamikoyo/math-angel/internal/errors"
 	"github.com/osamikoyo/math-angel/internal/user/model"
 	"github.com/osamikoyo/math-angel/pkg/logger"
@@ -95,4 +95,36 @@ func (c *Cache) GetUserByID(ctx context.Context, key string) (*model.User, error
 	}
 
 	return &user, nil
+}
+
+func (c *Cache) GetTop(ctx context.Context, key string) ([]model.User, error) {
+	c.logger.Info("fetch top from cache",
+		zap.String("key", key))
+
+	data, err := c.client.Get(ctx, key).Result()
+	if err != nil {
+
+		if errors.Is(err, redis.Nil) {
+			c.logger.Warn("top not found in cache", zap.String("key", key))
+			return nil, selferrors.ErrNotFound
+		}
+
+		c.logger.Warn("failed get top from cache",
+			zap.String("key", key),
+			zap.Error(err))
+
+		return nil, ErrInternalCacheError
+	}
+
+	var list []model.User
+
+	if err = json.Unmarshal([]byte(data), &list); err != nil {
+		c.logger.Error("failed decode data",
+			zap.String("data", data),
+			zap.Error(err))
+
+		return nil, selferrors.ErrFailedDecode
+	}
+
+	return list, nil
 }
