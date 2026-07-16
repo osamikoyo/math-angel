@@ -55,35 +55,33 @@ func (r *Repository) CreateUser(ctx context.Context, user *model.User) error {
 
 // GetUserByID fetch user from db by id
 func (r *Repository) GetUserByID(ctx context.Context, id uint) (*model.User, error) {
-    r.logger.Info("fetch user by id", zap.Uint("id", id))
+	r.logger.Info("fetch user by id", zap.Uint("id", id))
 
-    var user model.User
-    err := r.db.WithContext(ctx).
-        Preload("Profile").
-        Where("id = ?", id).
-        First(&user).Error
+	var user model.User
+	err := r.db.WithContext(ctx).
+		Preload("Profile").
+		Where("id = ?", id).
+		First(&user).Error
 
-    if err != nil {
-        r.logger.Error("failed get user by id",
-            zap.Uint("id", id),
-            zap.Error(err),
-        )
+	if err != nil {
+		r.logger.Error("failed get user by id",
+			zap.Uint("id", id),
+			zap.Error(err),
+		)
 
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return nil, selferrors.ErrNotFound
-        }
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, selferrors.ErrNotFound
+		}
 
-        return nil, selferrors.ErrUnknown
-    }
+		return nil, selferrors.ErrUnknown
+	}
 
-    r.logger.Info("user fetched successfully by id",
-        zap.Uint("id", user.ID),
-        zap.String("username", user.Username),
-    )
+	r.logger.Info("user fetched successfully by id",
+		zap.Any("user", user),
+	)
 
-    return &user, nil
+	return &user, nil
 }
-
 
 // GetUserByUsername fetch user by username
 func (r *Repository) GetUserByUsername(ctx context.Context, username string) (*model.User, error) {
@@ -111,36 +109,36 @@ func (r *Repository) GetUserByUsername(ctx context.Context, username string) (*m
 }
 
 func (r *Repository) UpdateProfile(ctx context.Context, userID uint, column string, value any) error {
-    r.logger.Info("update profile",
-        zap.Uint("user_id", userID),
-        zap.String("column", column),
-    )
+	r.logger.Info("update profile",
+		zap.Uint("user_id", userID),
+		zap.String("column", column),
+	)
 
-    result := r.db.WithContext(ctx).
-        Model(&model.Profile{}).
-        Where("user_id = ?", userID).
-        Update(column, value)
+	result := r.db.WithContext(ctx).
+		Model(&model.Profile{}).
+		Where("user_id = ?", userID).
+		Update(column, value)
 
-    if result.Error != nil {
-        r.logger.Error("failed update profile",
-            zap.Uint("user_id", userID),
-            zap.String("column", column),
-            zap.Error(result.Error),
-        )
-        return selferrors.ErrUnknown
-    }
+	if result.Error != nil {
+		r.logger.Error("failed update profile",
+			zap.Uint("user_id", userID),
+			zap.String("column", column),
+			zap.Error(result.Error),
+		)
+		return selferrors.ErrUnknown
+	}
 
-    if result.RowsAffected == 0 {
-        r.logger.Warn("profile not found for update",
-            zap.Uint("user_id", userID),
-        )
-        return selferrors.ErrNotFound
-    }
+	if result.RowsAffected == 0 {
+		r.logger.Warn("profile not found for update",
+			zap.Uint("user_id", userID),
+		)
+		return selferrors.ErrNotFound
+	}
 
-    r.logger.Info("profile updated successfully",
-        zap.Uint("user_id", userID),
-        zap.String("column", column),
-    )
+	r.logger.Info("profile updated successfully",
+		zap.Uint("user_id", userID),
+		zap.String("column", column),
+	)
 
-    return nil
+	return nil
 }
