@@ -8,6 +8,7 @@ import (
 
 	selferrors "github.com/osamikoyo/math-angel/internal/errors"
 	"github.com/osamikoyo/math-angel/internal/user/model"
+	"github.com/osamikoyo/math-angel/internal/user/service"
 	"github.com/osamikoyo/math-angel/pkg/logger"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
@@ -25,6 +26,8 @@ type Cache struct {
 	logger     *logger.Logger
 	defaultExp time.Duration
 }
+
+var _ service.UserCache = &Cache{}
 
 func NewCache(client *redis.Client, logger *logger.Logger, defaultExp time.Duration) *Cache {
 	return &Cache{
@@ -127,4 +130,27 @@ func (c *Cache) GetTop(ctx context.Context, key string) ([]model.User, error) {
 	}
 
 	return list, nil
+}
+
+func (c *Cache) SetTop(ctx context.Context, key string, top []model.User) error {
+	c.logger.Info("add top to cache",
+		zap.String("key", key))
+
+	data, err := json.Marshal(&top)
+	if err != nil {
+		c.logger.Error("failed marshal top",
+			zap.Error(err))
+
+		return ErrFailedMarshal
+	}
+
+	err = c.client.Set(ctx, key, data, c.defaultExp).Err()
+	if err != nil {
+		c.logger.Error("failed add top to cache",
+			zap.Error(err))
+
+		return ErrInternalCacheError
+	}
+
+	return nil
 }
