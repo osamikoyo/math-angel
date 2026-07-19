@@ -22,6 +22,7 @@ type UserRepository interface {
 	GetUserByID(ctx context.Context, id uint) (*model.User, error)
 	GetUserByUsername(ctx context.Context, username string) (*model.User, error)
 	UpdateProfile(ctx context.Context, userID uint, column string, value any) error
+	GetUsers(ctx context.Context) ([]model.User, error)
 }
 
 type TaskCachedRepo interface {
@@ -34,8 +35,14 @@ type TaskCachedRepo interface {
 	GetSolution(ctx context.Context, userID uint, taskID string) (*taskmodel.Solution, error)
 }
 
+type UserCache interface {
+	GetTop(ctx context.Context, key string) ([]model.User, error)
+	SetTop(ctx context.Context, key string, top []model.User) error
+}
+
 type Service struct {
 	userRepo       UserRepository
+	userCache      UserCache
 	taskCachedRepo TaskCachedRepo
 
 	config  *config.Config
@@ -170,7 +177,7 @@ func (s *Service) TaskSolved(reqCtx context.Context, userID uint, taskID uuid.UU
 	solution := taskmodel.NewSolution(taskID.String(), userID)
 
 	err = s.taskCachedRepo.CreateSolution(ctx, solution)
-	if err != nil{
+	if err != nil {
 		return err
 	}
 
@@ -187,6 +194,85 @@ func (s *Service) GetProfile(reqCtx context.Context, userID uint) (*model.Profil
 	}
 
 	return user.Profile, nil
+}
+
+type userWithPoints struct {
+	user   *model.User
+	points int
+}
+
+func getUserWithPoints(user *model.User) userWithPoints {
+	points := 0
+
+	points += int(user.Profile.EasyTasksSolved)
+	points += int(user.Profile.MediumTasksSolved) * 2
+	points += int(user.Profile.HardTasksSolved) * 3
+
+	return userWithPoints{
+		points: points,
+		user:   user,
+	}
+}
+
+func (s *Service) GetUserTop(reqCtx context.Context, pageIndex, pageSize uint) ([]model.User, error) {
+	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
+	defer cancel()
+
+	top, err := s.userCache.GetTop(ctx, "bests_top")
+	if err == nil {
+		start := pageSize * (pageIndex - 1)
+
+		return top[start:min(int(start+pageSize), len(top))], nil
+	}
+
+	top, err = s.userRepo.GetUsers(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	userWithPoints := make([]userWithPoints, len(top))
+	for i, us := range top {
+		userWithPoints[i] = getUserWithPoints(&us)
+	}
+
+	userWithPoints = sortUserWithPoins(userWithPoints)
+
+	users := make([]model.User, len(top))
+	for i, us := range userWithPoints {
+		users[i] = *us.user
+	}
+
+	s.userCache.SetTop(ctx, "top", users)
+
+	start := pageSize * (pageIndex - 1)
+
+	return users[start:min(int(start+pageSize), len(users))], nil
+}
+
+func sortUserWithPoins(users []userWithPoints) []userWithPoints {
+	if len(users) <= 1 {
+		return users
+	}
+
+	pivot := users[len(users)/2].points
+	left := []userWithPoints{}
+	right := []userWithPoints{}
+	middle := []userWithPoints{}
+
+	for _, x := range users {
+		if x.points < pivot {
+			left = append(left, x)
+		} else if x.points == pivot {
+			middle = append(middle, x)
+		} else {
+			right = append(right, x)
+		}
+	}
+
+	left = sortUserWithPoins(left)
+	right = sortUserWithPoins(right)
+
+	return append(append(left, middle...), right...)
 }
 
 func firstToLower(s string) string {
