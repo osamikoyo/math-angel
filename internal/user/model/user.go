@@ -8,15 +8,14 @@ import (
 )
 
 type User struct {
-    ID           uint      `json:"id" gorm:"primaryKey"`
-    Email        string    `json:"email" gorm:"uniqueIndex"`
-    Username     string    `json:"username" gorm:"uniqueIndex"`
-    PasswordHash string    `json:"-"`
-    CreatedAt    time.Time `json:"created_at"`
+	ID           uint      `json:"id" gorm:"primaryKey"`
+	Email        string    `json:"email" gorm:"uniqueIndex"`
+	Username     string    `json:"username" gorm:"uniqueIndex"`
+	PasswordHash string    `json:"-"`
+	CreatedAt    time.Time `json:"created_at"`
 
-    Profile *Profile `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Profile *Profile `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
-
 
 func NewUser(email, username, password string) (*User, error) {
 	hashedpassword, err := crypt.HashPassword(password)
@@ -30,9 +29,9 @@ func NewUser(email, username, password string) (*User, error) {
 		PasswordHash: hashedpassword,
 		CreatedAt:    time.Now(),
 		Profile: &Profile{
-			HardTasksSolved: 0,
+			HardTasksSolved:   0,
 			MediumTasksSolved: 0,
-			EasyTasksSolved: 0,
+			EasyTasksSolved:   0,
 		},
 	}, nil
 }
