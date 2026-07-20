@@ -43,16 +43,16 @@ func SetupApp(configPath string) (*App, error) {
 		return nil, err
 	}
 
-	cache, err := setupCache(logger, cfg)
+	taskcache, usercache, err := setupCache(logger, cfg)
 	if err != nil {
 		return nil, err
 	}
 
-	cachedrepo := cachedrepo.NewCachedRepository(taskrepo, cache)
+	cachedrepo := cachedrepo.NewCachedRepository(taskrepo, taskcache)
 
 	taskservice := taskservice.NewTaskService(cachedrepo, cfg.Timeout)
 
-	userservice := userservice.NewService(userrepo, cachedrepo, cfg, cfg.Timeout)
+	userservice := userservice.NewService(userrepo, usercache, cachedrepo, cfg, cfg.Timeout)
 
 	var importer *importer.Importer
 	if cfg.Importer.Enabled {
