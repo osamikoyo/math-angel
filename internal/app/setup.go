@@ -15,6 +15,7 @@ import (
 	taskmodel "github.com/osamikoyo/math-angel/internal/task/model"
 	taskrepo "github.com/osamikoyo/math-angel/internal/task/repository"
 	taskservice "github.com/osamikoyo/math-angel/internal/task/service"
+	usercache "github.com/osamikoyo/math-angel/internal/user/cache"
 	userhandler "github.com/osamikoyo/math-angel/internal/user/handler"
 	"github.com/osamikoyo/math-angel/internal/user/handler/middleware"
 	usermodel "github.com/osamikoyo/math-angel/internal/user/model"
@@ -70,21 +71,33 @@ func setupRepos(logger *logger.Logger, cfg *config.Config) (*taskrepo.Repository
 }
 
 // setupCache connects to Redis for caching.
-func setupCache(logger *logger.Logger, cfg *config.Config) (*cache.Cache, error) {
-	client := redis.NewClient(&redis.Options{
+func setupCache(logger *logger.Logger, cfg *config.Config) (*cache.Cache, *usercache.Cache, error) {
+	taskClient := redis.NewClient(&redis.Options{
 		Addr:     cfg.Redis.Addr,
 		Password: "",
 		DB:       0,
 		Protocol: 2,
 	})
 
-	if err := client.Ping(context.Background()).Err(); err != nil {
+	if err := taskClient.Ping(context.Background()).Err(); err != nil {
 		logger.Error("failed connect to redis", zap.String("addr", cfg.Redis.Addr), zap.Error(err))
-		return nil, fmt.Errorf("failed connect to cache: %w", err)
+		return nil, nil, fmt.Errorf("failed connect to cache: %w", err)
+	}
+
+	userClient := redis.NewClient(&redis.Options{
+		Addr:     cfg.Redis.Addr,
+		Password: "",
+		DB:       0,
+		Protocol: 2,
+	})
+
+	if err := userClient.Ping(context.Background()).Err(); err != nil {
+		logger.Error("failed connect to redis", zap.String("addr", cfg.Redis.Addr), zap.Error(err))
+		return nil, nil, fmt.Errorf("failed connect to cache: %w", err)
 	}
 
 	logger.Info("redis connected successfully")
-	return cache.NewCache(client, logger, cfg.Redis.ExpTime), nil
+	return cache.NewCache(taskClient, logger, cfg.Redis.ExpTime), usercache.NewCache(userClient, logger, cfg.Redis.ExpTime), nil
 }
 
 // setupImporter initializes the data importer.
