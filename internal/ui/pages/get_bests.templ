@@ -6,29 +6,28 @@ templ BestsInvitationPage() {
 	@layouts.Page("Math-Angel") {
 		<div class="min-h-screen bg-base-950 py-16">
 			<div class="max-w-5xl mx-auto px-6">
-				
 				<!-- Заголовок -->
 				<div class="text-center mb-20">
 					<div class="inline-flex items-center gap-3 bg-base-900 border border-base-700 rounded-full px-8 py-3 mb-6">
 						<span class="text-2xl">🏆</span>
 						<span class="uppercase tracking-widest text-sm font-medium text-amber-400">Топ заданий</span>
 					</div>
-					
 					<h1 class="text-6xl md:text-7xl font-bold leading-none mb-6">
-						Лучшие задания<br>от сообщества
+						Лучшие задания
+						<br/>
+						от сообщества
 					</h1>
-					
 					<p class="text-2xl text-base-content/70 max-w-2xl mx-auto">
 						Здесь собраны задачи, которые больше всего понравились другим ученикам
 					</p>
 				</div>
-
 				<!-- Карточки выбора -->
 				<div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-					
 					<!-- По типам -->
-					<a href="/tasks/bests/all/all" 
-					   class="group card bg-base-900 border border-base-700 hover:border-amber-400 hover:shadow-2xl transition-all duration-300 overflow-hidden">
+					<a
+						href="/tasks/bests/all/all"
+						class="group card bg-base-900 border border-base-700 hover:border-amber-400 hover:shadow-2xl transition-all duration-300 overflow-hidden"
+					>
 						<div class="h-2 bg-gradient-to-r from-amber-400 to-yellow-400"></div>
 						<div class="p-10">
 							<div class="text-6xl mb-8 group-hover:scale-110 transition-transform">🌐</div>
@@ -41,10 +40,11 @@ templ BestsInvitationPage() {
 							</div>
 						</div>
 					</a>
-
 					<!-- По алгебре -->
-					<a href="/tasks/bests/algebra/all" 
-					   class="group card bg-base-900 border border-base-700 hover:border-primary hover:shadow-2xl transition-all duration-300 overflow-hidden">
+					<a
+						href="/tasks/bests/algebra/all"
+						class="group card bg-base-900 border border-base-700 hover:border-primary hover:shadow-2xl transition-all duration-300 overflow-hidden"
+					>
 						<div class="h-2 bg-gradient-to-r from-primary to-purple-500"></div>
 						<div class="p-10">
 							<div class="text-6xl mb-8 group-hover:scale-110 transition-transform">📐</div>
@@ -57,10 +57,11 @@ templ BestsInvitationPage() {
 							</div>
 						</div>
 					</a>
-
 					<!-- По геометрии -->
-					<a href="/tasks/bests/geometry/all" 
-					   class="group card bg-base-900 border border-base-700 hover:border-sky-400 hover:shadow-2xl transition-all duration-300 overflow-hidden">
+					<a
+						href="/tasks/bests/geometry/all"
+						class="group card bg-base-900 border border-base-700 hover:border-sky-400 hover:shadow-2xl transition-all duration-300 overflow-hidden"
+					>
 						<div class="h-2 bg-gradient-to-r from-sky-400 to-blue-500"></div>
 						<div class="p-10">
 							<div class="text-6xl mb-8 group-hover:scale-110 transition-transform">🔺</div>
@@ -73,10 +74,11 @@ templ BestsInvitationPage() {
 							</div>
 						</div>
 					</a>
-
 					<!-- По комбинаторике -->
-					<a href="/tasks/bests/combinatorics/all" 
-					   class="group card bg-base-900 border border-base-700 hover:border-emerald-400 hover:shadow-2xl transition-all duration-300 overflow-hidden">
+					<a
+						href="/tasks/bests/combinatorics/all"
+						class="group card bg-base-900 border border-base-700 hover:border-emerald-400 hover:shadow-2xl transition-all duration-300 overflow-hidden"
+					>
 						<div class="h-2 bg-gradient-to-r from-emerald-400 to-teal-500"></div>
 						<div class="p-10">
 							<div class="text-6xl mb-8 group-hover:scale-110 transition-transform">🎲</div>
@@ -90,16 +92,16 @@ templ BestsInvitationPage() {
 						</div>
 					</a>
 				</div>
-
 				<!-- Большая кнопка "Посмотреть все" -->
 				<div class="text-center mt-20">
-					<a href="/tasks/bests/all/all" 
-					   class="btn btn-primary btn-xl px-16 py-8 text-xl rounded-3xl shadow-2xl hover:scale-105 transition-all inline-flex items-center gap-4">
+					<a
+						href="/tasks/bests/all/all"
+						class="btn btn-primary btn-xl px-16 py-8 text-xl rounded-3xl shadow-2xl hover:scale-105 transition-all inline-flex items-center gap-4"
+					>
 						<span class="text-3xl">🏆</span>
 						Посмотреть все лучшие задания
 					</a>
 				</div>
-
 				<p class="text-center text-base-content/60 mt-6">
 					Задачи отсортированы по количеству ❤️ лайков
 				</p>
