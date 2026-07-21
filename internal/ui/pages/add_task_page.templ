@@ -19,89 +19,89 @@ templ ResultMessage(message string, isError bool) {
 
 templ AddTaskPage() {
 	@layouts.Page("Add Task") {
-			<div class="max-w-2xl mx-auto px-4 py-10">
-				<div class="card bg-base-100 shadow-xl">
-					<div class="card-body">
-						<h1 class="card-title text-3xl mb-8">Добавить новую задачу</h1>
-						<form
-							hx-post="/task/add"
-							hx-swap="innerHTML"
-							hx-target="#result-message"
-							class="space-y-6"
-						>
-							<div class="form-control">
-								<label class="label">
-									<span class="label-text font-medium">Тип задачи</span>
-								</label>
-								<input
-									type="text"
-									name="type"
-									placeholder="Например: Алгебра, Геометрия, Комбинаторика..."
-									class="input input-bordered w-full"
-									required
-								/>
-							</div>
-							<div class="form-control">
-								<label class="label">
-									<span class="label-text font-medium">Уровень сложности</span>
-								</label>
-								<select name="level" class="select select-bordered w-full" required>
-									<option value="">Выберите уровень</option>
-									<option value="easy">Лёгкий</option>
-									<option value="medium">Средний</option>
-									<option value="hard">Сложный</option>
-								</select>
-							</div>
-							<div class="form-control">
-								<label class="label">
-									<span class="label-text font-medium">Условие задачи</span>
-								</label>
-								<textarea
-									name="problem"
-									rows="5"
-									placeholder="Введите текст условия задачи..."
-									class="textarea textarea-bordered w-full resize-y min-h-32"
-									required
-								></textarea>
-							</div>
-							<div class="form-control">
-								<label class="label">
-									<span class="label-text font-medium">Решение (необязательно)</span>
-								</label>
-								<textarea
-									name="solution"
-									rows="6"
-									placeholder="Подробное решение задачи..."
-									class="textarea textarea-bordered w-full resize-y"
-								></textarea>
-							</div>
-							<!-- Ответ (boxed) -->
-							<div class="form-control">
-								<label class="label">
-									<span class="label-text font-medium">Ответ (то, что в рамке)</span>
-								</label>
-								<input
-									type="text"
-									name="boxed"
-									placeholder="Например: 42 или x=5"
-									class="input input-bordered w-full"
-								/>
-							</div>
-							<div class="pt-6">
-								<button
-									type="submit"
-									class="btn btn-primary btn-block text-lg h-14"
-								>
-									Добавить задачу
-								</button>
-							</div>
-						</form>
-						<div id="result-message" class="mt-6 min-h-[2.5rem]"></div>
-					</div>
-				</div>
-				<div class="text-center mt-8 text-sm text-base-content/60">
-					После успешного добавления вы можете продолжить добавлять задачи или вернуться в список.
+		<div class="max-w-2xl mx-auto px-4 py-10">
+			<div class="card bg-base-100 shadow-xl">
+				<div class="card-body">
+					<h1 class="card-title text-3xl mb-8">Добавить новую задачу</h1>
+					<form
+						hx-post="/task/add"
+						hx-swap="innerHTML"
+						hx-target="#result-message"
+						class="space-y-6"
+					>
+						<div class="form-control">
+							<label class="label">
+								<span class="label-text font-medium">Тип задачи</span>
+							</label>
+							<input
+								type="text"
+								name="type"
+								placeholder="Например: Алгебра, Геометрия, Комбинаторика..."
+								class="input input-bordered w-full"
+								required
+							/>
+						</div>
+						<div class="form-control">
+							<label class="label">
+								<span class="label-text font-medium">Уровень сложности</span>
+							</label>
+							<select name="level" class="select select-bordered w-full" required>
+								<option value="">Выберите уровень</option>
+								<option value="easy">Лёгкий</option>
+								<option value="medium">Средний</option>
+								<option value="hard">Сложный</option>
+							</select>
+						</div>
+						<div class="form-control">
+							<label class="label">
+								<span class="label-text font-medium">Условие задачи</span>
+							</label>
+							<textarea
+								name="problem"
+								rows="5"
+								placeholder="Введите текст условия задачи..."
+								class="textarea textarea-bordered w-full resize-y min-h-32"
+								required
+							></textarea>
+						</div>
+						<div class="form-control">
+							<label class="label">
+								<span class="label-text font-medium">Решение (необязательно)</span>
+							</label>
+							<textarea
+								name="solution"
+								rows="6"
+								placeholder="Подробное решение задачи..."
+								class="textarea textarea-bordered w-full resize-y"
+							></textarea>
+						</div>
+						<!-- Ответ (boxed) -->
+						<div class="form-control">
+							<label class="label">
+								<span class="label-text font-medium">Ответ (то, что в рамке)</span>
+							</label>
+							<input
+								type="text"
+								name="boxed"
+								placeholder="Например: 42 или x=5"
+								class="input input-bordered w-full"
+							/>
+						</div>
+						<div class="pt-6">
+							<button
+								type="submit"
+								class="btn btn-primary btn-block text-lg h-14"
+							>
+								Добавить задачу
+							</button>
+						</div>
+					</form>
+					<div id="result-message" class="mt-6 min-h-[2.5rem]"></div>
 				</div>
 			</div>
-		}
+			<div class="text-center mt-8 text-sm text-base-content/60">
+				После успешного добавления вы можете продолжить добавлять задачи или вернуться в список.
+			</div>
+		</div>
+	}
 }
