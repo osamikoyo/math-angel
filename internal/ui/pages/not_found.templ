@@ -1,63 +1,60 @@
 package pages
 
-
 import "github.com/osamikoyo/math-angel/internal/ui/layouts"
 
 templ NotFound() {
-    @layouts.Page("Not Found", ) {
-        <div class="min-h-screen flex items-center justify-center bg-base-100">
-            <div class="max-w-md mx-auto text-center px-6">
-                <div class="mb-8">
-                    <div class="text-[180px] leading-none font-black text-base-300 select-none">
-                        404
-                    </div>
-                    <div class="text-6xl -mt-8">🤔</div>
-                </div>
-
-                <h1 class="text-5xl font-bold mb-4 text-base-content">
-                    Ой! Задача потерялась
-                </h1>
-                <p class="text-xl text-base-content/70 mb-10">
-                    Мы не смогли найти страницу, которую вы ищете.
-                </p>
-
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/" 
-                       class="btn btn-primary btn-lg px-8">
-                        ← На главную
-                    </a>
-                    
-                    <a href="/train" 
-                       class="btn btn-outline btn-lg px-8">
-                        Начать тренировку
-                    </a>
-                </div>
-                <div class="mt-16 text-sm text-base-content/50">
-                    Если вы считаете, что это ошибка — напишите нам
-                </div>
-
-            </div>
-        </div>
-        }
+	@layouts.Page("Not Found") {
+		<div class="min-h-screen flex items-center justify-center bg-base-100">
+			<div class="max-w-md mx-auto text-center px-6">
+				<div class="mb-8">
+					<div class="text-[180px] leading-none font-black text-base-300 select-none">
+						404
+					</div>
+					<div class="text-6xl -mt-8">🤔</div>
+				</div>
+				<h1 class="text-5xl font-bold mb-4 text-base-content">
+					Ой! Задача потерялась
+				</h1>
+				<p class="text-xl text-base-content/70 mb-10">
+					Мы не смогли найти страницу, которую вы ищете.
+				</p>
+				<div class="flex flex-col sm:flex-row gap-4 justify-center">
+					<a
+						href="/"
+						class="btn btn-primary btn-lg px-8"
+					>
+						← На главную
+					</a>
+					<a
+						href="/train"
+						class="btn btn-outline btn-lg px-8"
+					>
+						Начать тренировку
+					</a>
+				</div>
+				<div class="mt-16 text-sm text-base-content/50">
+					Если вы считаете, что это ошибка — напишите нам
+				</div>
+			</div>
+		</div>
+	}
 }
 
 templ NotFoundComponent() {
-        <div class="min-h-screen flex items-center justify-center bg-base-100">
-            <div class="max-w-md mx-auto text-center px-6">
-                <div class="mb-8">
-                    <div class="text-[180px] leading-none font-black text-base-300 select-none">
-                        404
-                    </div>
-                    <div class="text-6xl -mt-8">🤔</div>
-                </div>
-
-                <h1 class="text-5xl font-bold mb-4 text-base-content">
-                    Ой! Задача потерялась
-                </h1>
-                <p class="text-xl text-base-content/70 mb-10">
-                    Мы не смогли найти задачи, которые вы ищете.
-                </p>
-
-            </div>
-        </div>
+	<div class="min-h-screen flex items-center justify-center bg-base-100">
+		<div class="max-w-md mx-auto text-center px-6">
+			<div class="mb-8">
+				<div class="text-[180px] leading-none font-black text-base-300 select-none">
+					404
+				</div>
+				<div class="text-6xl -mt-8">🤔</div>
+			</div>
+			<h1 class="text-5xl font-bold mb-4 text-base-content">
+				Ой! Задача потерялась
+			</h1>
+			<p class="text-xl text-base-content/70 mb-10">
+				Мы не смогли найти задачи, которые вы ищете.
+			</p>
+		</div>
+	</div>
 }
