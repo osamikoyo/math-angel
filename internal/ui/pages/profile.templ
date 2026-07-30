@@ -1,86 +1,87 @@
 package pages
 
 import (
-    "github.com/osamikoyo/math-angel/internal/user/model"
-    "fmt"
+	"fmt"
 	"github.com/osamikoyo/math-angel/internal/ui/layouts"
+	"github.com/osamikoyo/math-angel/internal/user/model"
 )
 
 templ ProfilePage(profile *model.Profile) {
-    @layouts.Page("Профиль" ) {
-        <div class="max-w-4xl mx-auto p-6">
-            <!-- Header профиля -->
-            <div class="card bg-base-900 shadow-xl mb-8">
-                <div class="card-body items-center text-center">
-                    <div class="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center text-6xl mb-4">
-                        👤
-                    </div>
-                    <p class="text-base-content/60 mt-1">Math Angel</p>
-                    
-                    <div class="flex gap-8 mt-6">
-                        <div>
-                            <div class="text-3xl font-bold text-primary">{ fmt.Sprintf("%d", profile.TotalSolved) }</div>
-                            <div class="text-sm text-base-content/60">Задач решено</div>
-                        </div>
-                        <div>
-                            <div class="text-3xl font-bold">{ fmt.Sprintf("%d", profile.EasyTasksSolved + profile.MediumTasksSolved + profile.HardTasksSolved) }</div>
-                            <div class="text-sm text-base-content/60">Всего попыток</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Статистика по сложности -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                
-                <!-- Easy -->
-                <div class="card bg-base-900 shadow-xl hover:shadow-2xl transition-shadow">
-                    <div class="card-body">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="text-emerald-400 text-2xl font-bold">Лёгкие</div>
-                                <div class="text-5xl font-bold mt-2">{ fmt.Sprintf("%d", profile.EasyTasksSolved) }</div>
-                            </div>
-                            <div class="text-6xl opacity-20">🌱</div>
-                        </div>
-                        <progress class="progress progress-success w-full mt-4" 
-                                  value={ fmt.Sprintf("%d", profile.EasyTasksSolved) } 
-                                  max="100"></progress>
-                    </div>
-                </div>
-
-                <!-- Medium -->
-                <div class="card bg-base-900 shadow-xl hover:shadow-2xl transition-shadow">
-                    <div class="card-body">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="text-amber-400 text-2xl font-bold">Средние</div>
-                                <div class="text-5xl font-bold mt-2">{ fmt.Sprintf("%d", profile.MediumTasksSolved) }</div>
-                            </div>
-                            <div class="text-6xl opacity-20">⭐</div>
-                        </div>
-                        <progress class="progress progress-warning w-full mt-4" 
-                                  value={ fmt.Sprintf("%d", profile.MediumTasksSolved) } 
-                                  max="100"></progress>
-                    </div>
-                </div>
-
-                <!-- Hard -->
-                <div class="card bg-base-900 shadow-xl hover:shadow-2xl transition-shadow">
-                    <div class="card-body">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="text-rose-400 text-2xl font-bold">Сложные</div>
-                                <div class="text-5xl font-bold mt-2">{ fmt.Sprintf("%d", profile.HardTasksSolved) }</div>
-                            </div>
-                            <div class="text-6xl opacity-20">🔥</div>
-                        </div>
-                        <progress class="progress progress-error w-full mt-4" 
-                                  value={ fmt.Sprintf("%d", profile.HardTasksSolved) } 
-                                  max="100"></progress>
-                    </div>
-                </div>
-            </div>
-        </div>
-    }
+	@layouts.Page("Профиль") {
+		<div class="max-w-4xl mx-auto p-6">
+			<!-- Header профиля -->
+			<div class="card bg-base-900 shadow-xl mb-8">
+				<div class="card-body items-center text-center">
+					<div class="w-32 h-32 rounded-full bg-primary/10 flex items-center justify-center text-6xl mb-4">
+						👤
+					</div>
+					<p class="text-base-content/60 mt-1">Math Angel</p>
+					<div class="flex gap-8 mt-6">
+						<div>
+							<div class="text-3xl font-bold text-primary">{ fmt.Sprintf("%d", profile.TotalSolved) }</div>
+							<div class="text-sm text-base-content/60">Задач решено</div>
+						</div>
+						<div>
+							<div class="text-3xl font-bold">{ fmt.Sprintf("%d", profile.EasyTasksSolved + profile.MediumTasksSolved + profile.HardTasksSolved) }</div>
+							<div class="text-sm text-base-content/60">Всего попыток</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Статистика по сложности -->
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+				<!-- Easy -->
+				<div class="card bg-base-900 shadow-xl hover:shadow-2xl transition-shadow">
+					<div class="card-body">
+						<div class="flex justify-between items-start">
+							<div>
+								<div class="text-emerald-400 text-2xl font-bold">Лёгкие</div>
+								<div class="text-5xl font-bold mt-2">{ fmt.Sprintf("%d", profile.EasyTasksSolved) }</div>
+							</div>
+							<div class="text-6xl opacity-20">🌱</div>
+						</div>
+						<progress
+							class="progress progress-success w-full mt-4"
+							value={ fmt.Sprintf("%d", profile.EasyTasksSolved) }
+							max="100"
+						></progress>
+					</div>
+				</div>
+				<!-- Medium -->
+				<div class="card bg-base-900 shadow-xl hover:shadow-2xl transition-shadow">
+					<div class="card-body">
+						<div class="flex justify-between items-start">
+							<div>
+								<div class="text-amber-400 text-2xl font-bold">Средние</div>
+								<div class="text-5xl font-bold mt-2">{ fmt.Sprintf("%d", profile.MediumTasksSolved) }</div>
+							</div>
+							<div class="text-6xl opacity-20">⭐</div>
+						</div>
+						<progress
+							class="progress progress-warning w-full mt-4"
+							value={ fmt.Sprintf("%d", profile.MediumTasksSolved) }
+							max="100"
+						></progress>
+					</div>
+				</div>
+				<!-- Hard -->
+				<div class="card bg-base-900 shadow-xl hover:shadow-2xl transition-shadow">
+					<div class="card-body">
+						<div class="flex justify-between items-start">
+							<div>
+								<div class="text-rose-400 text-2xl font-bold">Сложные</div>
+								<div class="text-5xl font-bold mt-2">{ fmt.Sprintf("%d", profile.HardTasksSolved) }</div>
+							</div>
+							<div class="text-6xl opacity-20">🔥</div>
+						</div>
+						<progress
+							class="progress progress-error w-full mt-4"
+							value={ fmt.Sprintf("%d", profile.HardTasksSolved) }
+							max="100"
+						></progress>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
 }
