@@ -3,90 +3,88 @@ package pages
 import "github.com/osamikoyo/math-angel/internal/ui/layouts"
 
 templ Register() {
-    @layouts.Page("Регистрация — Math-Angel") {
-        <div class="min-h-screen flex items-center justify-center px-4 py-12 bg-base-950">
-            <div class="max-w-md w-full">
-                <div class="card bg-base-900 shadow-2xl">
-                    <div class="card-body">
-                        <!-- Заголовок -->
-                        <div class="text-center mb-8">
-                            <div class="text-5xl mb-4">👼</div>
-                            <h1 class="text-3xl font-bold">Создать аккаунт</h1>
-                            <p class="text-base-content/60 mt-2">Начни решать задачи вместе с Math-Angel</p>
-                        </div>
-
-                        <!-- Форма -->
-                        <form 
-                            hx-post="/register" 
-                            hx-swap="none"
-                            hx-on::after-request="handleRegisterResponse(event)"
-                            class="space-y-6">
-
-                            <div class="form-control">
-                                <label class="label"><span class="label-text">Имя пользователя</span></label>
-                                <input 
-                                    type="text" 
-                                    name="username"
-                                    placeholder="math_angel_42"
-                                    class="input input-bordered w-full bg-base-800 focus:input-primary"
-                                    required
-                                    minlength="3"
-                                    maxlength="30" />
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label"><span class="label-text">Email</span></label>
-                                <input 
-                                    type="email" 
-                                    name="email"
-                                    placeholder="you@example.com"
-                                    class="input input-bordered w-full bg-base-800 focus:input-primary"
-                                    required />
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label"><span class="label-text">Пароль</span></label>
-                                <input 
-                                    type="password" 
-                                    name="password"
-                                    id="password"
-                                    placeholder="••••••••"
-                                    class="input input-bordered w-full bg-base-800 focus:input-primary"
-                                    required
-                                    minlength="6" />
-                            </div>
-
-                            <div class="form-control">
-                                <label class="label"><span class="label-text">Подтверждение пароля</span></label>
-                                <input 
-                                    type="password" 
-                                    name="password_confirm"
-                                    id="password_confirm"
-                                    placeholder="••••••••"
-                                    class="input input-bordered w-full bg-base-800 focus:input-primary"
-                                    required
-                                    minlength="6" />
-                            </div>
-
-                            <button 
-                                type="submit"
-                                class="btn btn-primary btn-block text-lg h-12 mt-4">
-                                Зарегистрироваться
-                            </button>
-                        </form>
-
-                        <div class="text-center mt-6">
-                            <p class="text-base-content/60">
-                                Уже есть аккаунт? 
-                                <a href="/login" class="text-primary hover:underline font-medium">Войти</a>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <script>
+	@layouts.Page("Регистрация — Math-Angel") {
+		<div class="min-h-screen flex items-center justify-center px-4 py-12 bg-base-950">
+			<div class="max-w-md w-full">
+				<div class="card bg-base-900 shadow-2xl">
+					<div class="card-body">
+						<!-- Заголовок -->
+						<div class="text-center mb-8">
+							<div class="text-5xl mb-4">👼</div>
+							<h1 class="text-3xl font-bold">Создать аккаунт</h1>
+							<p class="text-base-content/60 mt-2">Начни решать задачи вместе с Math-Angel</p>
+						</div>
+						<!-- Форма -->
+						<form
+							hx-post="/register"
+							hx-swap="none"
+							hx-on::after-request="handleRegisterResponse(event)"
+							class="space-y-6"
+						>
+							<div class="form-control">
+								<label class="label"><span class="label-text">Имя пользователя</span></label>
+								<input
+									type="text"
+									name="username"
+									placeholder="math_angel_42"
+									class="input input-bordered w-full bg-base-800 focus:input-primary"
+									required
+									minlength="3"
+									maxlength="30"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label"><span class="label-text">Email</span></label>
+								<input
+									type="email"
+									name="email"
+									placeholder="you@example.com"
+									class="input input-bordered w-full bg-base-800 focus:input-primary"
+									required
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label"><span class="label-text">Пароль</span></label>
+								<input
+									type="password"
+									name="password"
+									id="password"
+									placeholder="••••••••"
+									class="input input-bordered w-full bg-base-800 focus:input-primary"
+									required
+									minlength="6"
+								/>
+							</div>
+							<div class="form-control">
+								<label class="label"><span class="label-text">Подтверждение пароля</span></label>
+								<input
+									type="password"
+									name="password_confirm"
+									id="password_confirm"
+									placeholder="••••••••"
+									class="input input-bordered w-full bg-base-800 focus:input-primary"
+									required
+									minlength="6"
+								/>
+							</div>
+							<button
+								type="submit"
+								class="btn btn-primary btn-block text-lg h-12 mt-4"
+							>
+								Зарегистрироваться
+							</button>
+						</form>
+						<div class="text-center mt-6">
+							<p class="text-base-content/60">
+								Уже есть аккаунт? 
+								<a href="/login" class="text-primary hover:underline font-medium">Войти</a>
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script>
             function handleRegisterResponse(evt) {
                 if (evt.detail.successful) {
                     const toast = document.createElement('div');
@@ -131,5 +129,5 @@ templ Register() {
                 }
             });
         </script>
-    }
+	}
 }
