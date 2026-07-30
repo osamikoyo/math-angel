@@ -1,117 +1,111 @@
 package pages
 
 import (
-    "github.com/osamikoyo/math-angel/internal/task/model"
-    "github.com/osamikoyo/math-angel/internal/ui/layouts"
-    "fmt"
+	"fmt"
+	"github.com/osamikoyo/math-angel/internal/task/model"
+	"github.com/osamikoyo/math-angel/internal/ui/layouts"
 )
 
 templ TasksPage(tasks []model.Task, pageSize, pageIndex int) {
-    @layouts.Page("Math-angel • Задачи") {
-        <div class="max-w-6xl mx-auto px-4 py-8">
-            <div class="flex items-center justify-between mb-8">
-                <div>
-                    <h1 class="text-4xl font-bold text-base-content">Все задачи</h1>
-                    <p class="text-base-content/70 mt-1">Выберите задачу и начните тренироваться</p>
-                </div>
-
-                <div class="flex gap-3">
-                    <a href="/train" class="btn btn-primary">
-                        Начать тренировку
-                    </a>
-                    <a href="/bests" class="btn btn-outline">
-                        Лучшие задачи по типу
-                    </a>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tasks-list">
-                for _, task := range tasks {
-                    <div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 border border-base-200 overflow-hidden">
-                        <div class="card-body">
-                            <!-- Тип и уровень -->
-                            <div class="flex justify-between items-start mb-4">
-                                <span class="badge badge-primary badge-md font-medium">
-                                    { task.Type }
-                                </span>
-                                <span class="badge badge-outline badge-sm">
-                                    { task.Level }
-                                </span>
-                            </div>
-
-                            <h2 class="line-clamp-3 text-lg font-semibold leading-tight mb-4 min-h-[3.5em] katex-content">
-                                { task.Problem }
-                            </h2>
-
-                            if task.Boxed != "" {
-                                <div class="mb-5">
-                                    <p class="text-xs uppercase tracking-widest text-base-content/60 mb-1">Ответ</p>
-                                    <div class="font-mono text-xl font-bold text-primary katex-content">
-                                        { task.Boxed }
-                                    </div>
-                                </div>
-                            }
-
-                            <!-- Рейтинг -->
-                            <div class="flex items-center justify-between text-sm mt-auto pt-4 border-t border-base-200">
-                                <div class="flex items-center gap-4">
-                                    <div class="flex items-center gap-1 text-success">
-                                        ❤️ <span class="font-medium">{ task.Likes }</span>
-                                    </div>
-                                    <div class="flex items-center gap-1 text-error">
-                                        💔 <span class="font-medium">{ task.Dislikes }</span>
-                                    </div>
-                                </div>
-
-                                <!-- Кнопка "Решить" -->
-                                <a href={ fmt.Sprintf("/task/get/%s", task.UID) }
-                                   class="btn btn-sm btn-primary btn-outline">
-                                    Решить
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                }
-            </div>
-
-            <!-- Пагинация -->
-            if len(tasks) > 0 {
-                <div class="flex justify-center mt-12">
-                    <div class="join">
-                        if pageIndex > 0 {
-                            <a href={ fmt.Sprintf("/bests?page=%d&size=%d", pageIndex-1, pageSize) }
-                               class="join-item btn btn-outline">
-                                ← Предыдущая
-                            </a>
-                        }
-
-                        <button class="join-item btn btn-active">
-                            Страница { pageIndex + 1 }
-                        </button>
-
-                        <a href={ fmt.Sprintf("/bests?page=%d&size=%d", pageIndex+1, pageSize) }
-                           class="join-item btn btn-outline">
-                            Следующая →
-                        </a>
-                    </div>
-                </div>
-            }
-
-            if len(tasks) == 0 {
-                <div class="text-center py-20">
-                    <div class="text-6xl mb-4">📭</div>
-                    <h3 class="text-2xl font-semibold mb-2">Задачи не найдены</h3>
-                    <p class="text-base-content/60">Попробуйте изменить фильтры</p>
-                </div>
-            }
-        </div>
-
-        <!-- KaTeX для списка задач -->
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-        <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
-        
-        <script>
+	@layouts.Page("Math-angel • Задачи") {
+		<div class="max-w-6xl mx-auto px-4 py-8">
+			<div class="flex items-center justify-between mb-8">
+				<div>
+					<h1 class="text-4xl font-bold text-base-content">Все задачи</h1>
+					<p class="text-base-content/70 mt-1">Выберите задачу и начните тренироваться</p>
+				</div>
+				<div class="flex gap-3">
+					<a href="/train" class="btn btn-primary">
+						Начать тренировку
+					</a>
+					<a href="/bests" class="btn btn-outline">
+						Лучшие задачи по типу
+					</a>
+				</div>
+			</div>
+			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="tasks-list">
+				for _, task := range tasks {
+					<div class="card bg-base-100 shadow-md hover:shadow-xl transition-all duration-300 border border-base-200 overflow-hidden">
+						<div class="card-body">
+							<!-- Тип и уровень -->
+							<div class="flex justify-between items-start mb-4">
+								<span class="badge badge-primary badge-md font-medium">
+									{ task.Type }
+								</span>
+								<span class="badge badge-outline badge-sm">
+									{ task.Level }
+								</span>
+							</div>
+							<h2 class="line-clamp-3 text-lg font-semibold leading-tight mb-4 min-h-[3.5em] katex-content">
+								{ task.Problem }
+							</h2>
+							if task.Boxed != "" {
+								<div class="mb-5">
+									<p class="text-xs uppercase tracking-widest text-base-content/60 mb-1">Ответ</p>
+									<div class="font-mono text-xl font-bold text-primary katex-content">
+										{ task.Boxed }
+									</div>
+								</div>
+							}
+							<!-- Рейтинг -->
+							<div class="flex items-center justify-between text-sm mt-auto pt-4 border-t border-base-200">
+								<div class="flex items-center gap-4">
+									<div class="flex items-center gap-1 text-success">
+										❤️ <span class="font-medium">{ task.Likes }</span>
+									</div>
+									<div class="flex items-center gap-1 text-error">
+										💔 <span class="font-medium">{ task.Dislikes }</span>
+									</div>
+								</div>
+								<!-- Кнопка "Решить" -->
+								<a
+									href={ fmt.Sprintf("/task/get/%s", task.UID) }
+									class="btn btn-sm btn-primary btn-outline"
+								>
+									Решить
+								</a>
+							</div>
+						</div>
+					</div>
+				}
+			</div>
+			<!-- Пагинация -->
+			if len(tasks) > 0 {
+				<div class="flex justify-center mt-12">
+					<div class="join">
+						if pageIndex > 0 {
+							<a
+								href={ fmt.Sprintf("/bests?page=%d&size=%d", pageIndex-1, pageSize) }
+								class="join-item btn btn-outline"
+							>
+								← Предыдущая
+							</a>
+						}
+						<button class="join-item btn btn-active">
+							Страница { pageIndex + 1 }
+						</button>
+						<a
+							href={ fmt.Sprintf("/bests?page=%d&size=%d", pageIndex+1, pageSize) }
+							class="join-item btn btn-outline"
+						>
+							Следующая →
+						</a>
+					</div>
+				</div>
+			}
+			if len(tasks) == 0 {
+				<div class="text-center py-20">
+					<div class="text-6xl mb-4">📭</div>
+					<h3 class="text-2xl font-semibold mb-2">Задачи не найдены</h3>
+					<p class="text-base-content/60">Попробуйте изменить фильтры</p>
+				</div>
+			}
+		</div>
+		<!-- KaTeX для списка задач -->
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"/>
+		<script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/contrib/auto-render.min.js"></script>
+		<script>
             document.addEventListener("DOMContentLoaded", function() {
                 renderMathInElement(document.body, {
                     delimiters: [
@@ -125,5 +119,5 @@ templ TasksPage(tasks []model.Task, pageSize, pageIndex int) {
                 });
             });
         </script>
-    }
+	}
 }
