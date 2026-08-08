@@ -26,6 +26,7 @@ func (h *Handler) RegisterRouters(e *echo.Echo) {
 	e.GET("/profile", h.pagehandlers.GetProfile, h.mw.Auth)
 	e.GET("/register", h.pagehandlers.RegisterPage)
 	e.GET("/login", h.pagehandlers.Login)
+	e.GET("/top/page/:page_index/size/:page_size", h.pagehandlers.GetTop)
 
 	// func handlers
 	e.POST("/register", h.Register)
