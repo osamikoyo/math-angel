@@ -1,0 +1,89 @@
+package pages
+
+import (
+	"fmt"
+	"github.com/osamikoyo/math-angel/internal/ui/layouts"
+	"github.com/osamikoyo/math-angel/internal/user/model"
+)
+
+templ TopPage(top []model.User, currentPage, pageSize, totalPages int) {
+	@layouts.Page("Топ участников — Math-Angel") {
+		<div class="max-w-5xl mx-auto p-6">
+			<div class="mb-8">
+				<h1 class="text-4xl font-bold text-center mb-2">🏆 Топ участников</h1>
+				<p class="text-center text-base-content/60">Лучшие математики проекта</p>
+			</div>
+			<!-- Таблица топа -->
+			<div class="card bg-base-900 shadow-xl overflow-hidden">
+				<div class="overflow-x-auto">
+					<table class="table w-full">
+						<thead>
+							<tr>
+								<th class="text-left">Место</th>
+								<th class="text-left">Участник</th>
+								<th class="text-center">Решено задач</th>
+								<th class="text-center">Уровень</th>
+							</tr>
+						</thead>
+						<tbody>
+							for i, user := range top {
+								<tr class="hover:bg-base-800 transition-colors">
+									<td class="font-bold text-lg">
+										switch i {
+											case 0:
+												<span class="text-3xl">🥇</span>
+											case 1:
+												<span class="text-3xl">🥈</span>
+											case 2:
+												<span class="text-3xl">🥉</span>
+											default:
+												fmt.Sprintf("#%d", (currentPage-1)*pageSize + i + 1) 
+										}
+									</td>
+									<td>
+										<div class="flex items-center gap-3">
+											<div class="w-10 h-10 rounded-full bg-base-700 flex items-center justify-center text-xl">
+												👤
+											</div>
+											<div>
+												<div class="font-semibold">{ user.Username }</div>
+												<div class="text-sm text-base-content/60">{ user.Email }</div>
+											</div>
+										</div>
+									</td>
+									<td class="text-center font-mono font-bold text-lg text-primary">
+										{ fmt.Sprintf("%d", user.Profile.EasyTasksSolved + user.Profile.HardTasksSolved + user.Profile.MediumTasksSolved) }
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- Пагинация -->
+			<div class="flex justify-center mt-10">
+				<div class="join">
+					if currentPage > 1 {
+						<a
+							href={ fmt.Sprintf("/top/page/%d/size/%d", currentPage-1, pageSize) }
+							class="join-item btn btn-outline"
+						>
+							← Назад
+						</a>
+					}
+					<button class="join-item btn btn-active">
+						Страница { fmt.Sprintf("%d", currentPage) } из { fmt.Sprintf("%d", totalPages) }
+					</button>
+					if currentPage < totalPages {
+						<a
+							href={ fmt.Sprintf("/top/page/%d/size/%d", currentPage+1, pageSize) }
+							class="join-item btn btn-outline"
+						>
+							Вперёд →
+						</a>
+					}
+				</div>
+			</div>
+		</div>
+	}
+}
