@@ -49,9 +49,10 @@ type Service struct {
 	timeout time.Duration
 }
 
-func NewService(userrepo UserRepository, taskCachedRepo TaskCachedRepo, config *config.Config, timeout time.Duration) *Service {
+func NewService(userrepo UserRepository, usercache UserCache, taskCachedRepo TaskCachedRepo, config *config.Config, timeout time.Duration) *Service {
 	return &Service{
 		userRepo:       userrepo,
+		userCache:      usercache,
 		taskCachedRepo: taskCachedRepo,
 		config:         config,
 		timeout:        timeout,
@@ -214,7 +215,7 @@ func getUserWithPoints(user *model.User) userWithPoints {
 	}
 }
 
-func (s *Service) GetUserTop(reqCtx context.Context, pageIndex, pageSize uint) ([]model.User, error) {
+func (s *Service) GetUserTop(reqCtx context.Context, pageIndex, pageSize uint) ([]model.User, int, error) {
 	ctx, cancel := context.WithTimeout(reqCtx, s.timeout)
 	defer cancel()
 
@@ -222,12 +223,18 @@ func (s *Service) GetUserTop(reqCtx context.Context, pageIndex, pageSize uint) (
 	if err == nil {
 		start := pageSize * (pageIndex - 1)
 
-		return top[start:min(int(start+pageSize), len(top))], nil
+		return top[start:min(int(start+pageSize), len(top))], len(top), nil
 	}
 
 	top, err = s.userRepo.GetUsers(ctx)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
+	}
+
+	if top[0].Profile == nil {
+		log.Printf("profile is nil")
+
+		panic("nil user")
 	}
 
 	userWithPoints := make([]userWithPoints, len(top))
@@ -246,7 +253,7 @@ func (s *Service) GetUserTop(reqCtx context.Context, pageIndex, pageSize uint) (
 
 	start := pageSize * (pageIndex - 1)
 
-	return users[start:min(int(start+pageSize), len(users))], nil
+	return users[start:min(int(start+pageSize), len(users))], len(users), nil
 }
 
 func sortUserWithPoins(users []userWithPoints) []userWithPoints {
