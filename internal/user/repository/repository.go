@@ -146,19 +146,18 @@ func (r *Repository) UpdateProfile(ctx context.Context, userID uint, column stri
 func (r *Repository) GetUsers(ctx context.Context) ([]model.User, error) {
 	r.logger.Info("fetching users")
 
-	users, err := gorm.G[model.User](r.db).Find(ctx)
+	users, err := gorm.G[model.User](r.db).
+		Preload("Profile", nil).
+		Find(ctx)
 	if err != nil {
 		r.logger.Info("failed fetch users",
 			zap.Error(err))
-
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, selferrors.ErrNotFound
 		}
-
 		return nil, selferrors.ErrUnknown
 	}
 
 	r.logger.Info("users fetched successfully")
-
 	return users, nil
 }
